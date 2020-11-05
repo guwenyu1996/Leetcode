@@ -3,42 +3,29 @@ package Array;
 import java.util.*;
 
 class Solution {
-    public void nextPermutation(int[] nums) {
-        boolean found = false;
-        for(int i = nums.length -2; i >= 0; i --){
-            int flag = Integer.MAX_VALUE;
-            int index = i;
-            for(int j = i + 1; j < nums.length; j ++){
-                if(nums[j] > nums[i] && nums[j] < flag){
-                    flag = nums[j];
-                    index = j;
-                }
-            }
+    public int searchInsert(int[] nums, int target) {
+        int left = 0, right = nums.length - 1;
 
-            if(index != i){
-                for(int j = i + 1; j < nums.length; j ++)
-                    nums[j] = nums[j-1];
-                nums[i] = flag;
-                found = true;
-                break;
-            }
+        while(left < right){
+            int middle = left + (right - left) / 2;
+
+            if(nums[middle] == target)
+                return middle;
+            else if(nums[middle] > target)
+                right = middle - 1;
+            else
+                left = middle + 1;
         }
 
-        if(!found){
-            int middle = (nums.length + 1) / 2;
-            for(int i = 0; i < middle; i ++){
-                int temp = nums[i];
-                nums[i] = nums[nums.length - 1 - i];
-                nums[nums.length - 1 - i] = temp;
-            }
-        }
+        if(nums[left] < target)
+            return left;
+        else
+            return left + 1;
     }
 
     public static void main(String[] args){
-        int[] nums = new int[] {1, 3, 2};
-        new Solution().nextPermutation(nums);
-
-        for(int i = 0; i < nums.length; i ++)
-            System.out.println(nums[i]);
+        int[] nums = new int[]{1,3,5,6};
+        System.out.println(new Solution().searchInsert(nums, 2));
     }
+
 }
