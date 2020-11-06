@@ -22,7 +22,5 @@ public class BinarySearch {
         System.out.println(new BinarySearch().binarySearch(nums, 5));
     }
 
-    public int leftBound(int nums, int target){
 
-    }
 }

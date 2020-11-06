@@ -3,29 +3,38 @@ package Array;
 import java.util.*;
 
 class Solution {
-    public int searchInsert(int[] nums, int target) {
-        int left = 0, right = nums.length - 1;
+    // Not pass: local dillema
+    public int trap(int[] height) {
+        int left = 0, right = 0;
+        int sum = 0;
 
-        while(left < right){
-            int middle = left + (right - left) / 2;
+        while(right < height.length - 2){
+            while(right+1 < height.length && height[right] <= height[right+1]){
+                left ++;
+                right ++;
+            }
 
-            if(nums[middle] == target)
-                return middle;
-            else if(nums[middle] > target)
-                right = middle - 1;
-            else
-                left = middle + 1;
+            while(right+1 < height.length && height[right] > height[right+1])
+                right ++;
+
+            while(right+1 < height.length && height[right] <= height[right+1])
+                right ++;
+
+            if(right < height.length){
+                int x = height[left] < height[right] ? height[left] : height[right];
+                for(int i = left + 1; i < right; i ++){
+                    if(height[i] < x)
+                        sum += (x - height[i]);
+                }
+            }
+
+            left = right;
         }
-
-        if(nums[left] < target)
-            return left;
-        else
-            return left + 1;
+        return sum;
     }
 
     public static void main(String[] args){
-        int[] nums = new int[]{1,3,5,6};
-        System.out.println(new Solution().searchInsert(nums, 2));
+        int[] height = new int[]{4,2,0,3,2,5};
+        System.out.println(new Solution().trap(height));
     }
-
 }
