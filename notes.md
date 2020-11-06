@@ -256,13 +256,17 @@ Time complexity: $ O(n^2) $
 
 Use dynamic programming, instead of loop, to find max height of bar
 
-$ left_{max} = max(left_{max}, height[i]), right_{max} = max(right_{max}, height[i])$
+$ left_{max} = max(left_{max}, height[i-1]), right_{max} = max(right_{max}, height[i+1])$
 
 Time complexity: $ O(n) $
 
 **Solution 3**: stack
 
+参考 https://www.youtube.com/watch?v=cTSfu3j6G7I
 
+低洼是在(递减)(递加)之中，用stack存储单调递减
+
+一个值的left-max是stack的top, right-max是当element
 
 **Solution 4**: 2 pointers
 
@@ -277,3 +281,69 @@ Time complexity: $ O(n) $
   - Avoid local dilemma. 如果把array以longest bar来切割，只计算water between 最近的two longest bars, 会错过smaller longest bar还可以再装水的情况
 
     e.g. [4,2,0,3,2,5], expected: 9, output: 5
+
+- Dynamic programming
+  - 注意循环条件，是$i-1$还是$i$, $ left_{max} = max(left_{max}, height[i-1]), right_{max} = max(right_{max}, height[i+1])$ 
+
+### Tree
+
+#### 094/144/145 binary tree traversal
+
+Tree traversal
+
+- pre-order: root-left-right
+- in-order: left-root-right
+- post-order: left-right-root
+
+Solution
+
+- recursive
+
+  - Time complexity: $T(n) = 2T(n/2) + O(1)$ -> $O(n) $
+
+- iteration: use stack
+
+  - pre-order: add current point to stack, current point always point to left node, 
+
+    ​						when current pointer is null, pop an element, add point to right child
+
+  - Time complexity: $O(n) $ 
+
+#### 096 Unique Binary Search Tree
+
+Binary Search Tree:
+
+- left subtree of a node contains nodes with keys less than the node
+- right subtree of a node contains nodes with keys larger than the node
+- left & right subtree is a binary search tree
+
+Solution: dynamic programming
+
+Binary search tree is consisted of: left subtree, root, right subtree
+
+How many types of binary search tree: number of left subtree * number of right subtree
+
+![1604678856554](C:/Users/wenyu/AppData/Roaming/Typora/typora-user-images/1604678856554.png)
+
+Recursive formula:$G(n)$ denotes number of unique binary search tree when the number of nodes is n, $F(i,n)$ denotes number of unique BST when root is i
+
+$G(n) = \sum_{i=1}^{n} F(i, n)$
+
+$F(i, n) = G(i-1)* G(n-i)$ == left subtree * right subtree
+
+$G(n) = \sum_{i=1}^{n} G(i-1)*G(n-i)$
+
+Bottom cases: $G(0) = 1, G(1) = 1$, 没有node也是一种solution
+
+$G(3) = F(1, 3) + F(2, 3) + F(3, 3) = G(0)*G(2)+G(1)*G(1)+G(2)*G(0)$
+
+Time complexity: $O(n^2) $
+
+Corner case: 注意递归循环里的i, n , j取值
+
+#### 098  validate binary search tree
+
+思路错误：
+
+- 不是光检查node > left subtree && node < right subtree, 还要保证left subtree < last parent < parent of parent
+

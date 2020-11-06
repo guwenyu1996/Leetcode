@@ -1,8 +1,7 @@
-package Array;
-
-import java.util.*;
+package Tree._096;
 
 class Solution {
+    // dynamic programming
     public int numTrees(int n) {
         int[] G = new int[n+1];
         G[0] = 1;
@@ -19,9 +18,5 @@ class Solution {
         }
 
         return G[n];
-    }
-
-    public static void main(String[] args){
-        System.out.println(new Solution().numTrees(3));
     }
 }
