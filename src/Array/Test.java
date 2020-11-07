@@ -2,26 +2,46 @@ package Array;
 
 import java.util.*;
 
+class TreeNode {
+    int val;
+    TreeNode left;
+    TreeNode right;
+    TreeNode() {}
+    TreeNode(int val) { this.val = val; }
+    TreeNode(int val, TreeNode left, TreeNode right) {
+        this.val = val;
+        this.left = left;
+        this.right = right;
+    }
+}
+
 class Solution {
-    public int numTrees(int n) {
-        int[] G = new int[n+1];
-        G[0] = 1;
-        G[1] = 1;
+    Stack<TreeNode> stack = new Stack<> ();
+    Stack<Integer> upper = new Stack<> ();
+    Stack<Integer> lower = new Stack<> ();
 
-        if(n < 2)
-            return 1;
+    public boolean isValidBST(TreeNode root) {
+        update(root, null, null);
 
-        for(int i = 2; i <= n; i ++){
-            int num = 0;
-            for(int j = 1; j <= i; j ++)
-                num += G[j-1] * G[i-j];
-            G[i] = num;
+        while(!stack.isEmpty()){
+            TreeNode node = stack.pop();
+            Integer up = upper.pop();
+            Integer lo = lower.pop();
+
+            if(up != null && up <= node.val) return false;
+            if(lo != null && lo >= node.val) return false;
+
+            if(node.left != null)
+                update(node.left, lo, node.val);
+            if(node.right != null)
+                update(node.right, node.val, up);
         }
-
-        return G[n];
+        return true;
     }
 
-    public static void main(String[] args){
-        System.out.println(new Solution().numTrees(3));
+    public void update(TreeNode node, Integer upperLimit, Integer lowerLimit){
+        stack.push(node);
+        upper.push(upperLimit);
+        lower.push(lowerLimit);
     }
 }

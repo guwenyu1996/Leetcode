@@ -283,6 +283,7 @@ Time complexity: $ O(n) $
     e.g. [4,2,0,3,2,5], expected: 9, output: 5
 
 - Dynamic programming
+  
   - 注意循环条件，是$i-1$还是$i$, $ left_{max} = max(left_{max}, height[i-1]), right_{max} = max(right_{max}, height[i+1])$ 
 
 ### Tree
@@ -343,7 +344,64 @@ Corner case: 注意递归循环里的i, n , j取值
 
 #### 098  validate binary search tree
 
+**Solution 1**: recursion
+
+check if left subtree is smaller than upper bound, and right subtree larger than lower bound
+
+Use INTEGER instead of int to store lower and upper limits
+
+Time complexity: $O(n)$, space complexity: $ O(n) $
+
+**Solution 2**: iteration
+
+use stack to store current node, lower limit, upper limit
+
+Time complexity: $O(n)$, space complexity: $ O(n) $
+
+**Solution 3**: in-order traversal (left-root-right)
+
+Check in-order traversal, if every element is smaller than the next element
+
+Use stack to store left child. If left is null, retrieve stack top element, and move pointer to right children. 
+
 思路错误：
 
-- 不是光检查node > left subtree && node < right subtree, 还要保证left subtree < last parent < parent of parent
+- My solution: binary search, 检查parent node > left child && parent node < right child. 
 
+  但问题是不是光检查child nodes, 还要保证parent node > all elements of subtree
+
+  so need to keep both upper and lower limit
+
+Corner case:
+
+- Input [max_int]
+
+  use double to store last element
+
+#### 100 Same tree
+
+**Solution 1**: recursion
+
+Step: 
+
+1. check current point is same
+2. recursively check left subtree
+3. recursively check right subtree
+
+Time complexity: $ O(n) $, space complexity: this means the length of recursion stack, worst $ O(n) $, best $O(logn)$ when a balanced binary tree
+
+**Solution 2**: iteration
+
+Use deque (two direction queue) to store 遍历元素
+
+==Queue/Deque 不可以把null添加进队列中，否则当```poll()``` 方法返回null时，不知道是取到null 或者 队列为空==
+
+Time complexity: $ O(n) $, space complexity: this means the length of recursion stack, worst $ O(n) $, best $O(logn)$ when a balanced binary tree
+
+#### 101 symmetric tree
+
+**Solution 1**: recursion
+
+
+
+**Solution 2**: iteration
