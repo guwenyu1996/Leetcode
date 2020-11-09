@@ -1,5 +1,7 @@
 package Tree._101;
 
+import java.util.Stack;
+
 class TreeNode {
     int val;
     TreeNode left;
@@ -14,7 +16,7 @@ class TreeNode {
 }
 
 class Solution {
-    // Solution 1: recursion 
+    // Solution 1: recursion
     public boolean isSymmetric(TreeNode root) {
         if(root == null)
             return true;
@@ -32,5 +34,33 @@ class Solution {
             return false;
 
         return check(left.left, right.right) && check(left.right, right.left);
+    }
+
+    // Solution 3: iteration
+    public boolean isSymmetric2(TreeNode root) {
+        if(root == null)
+            return true;
+        TreeNode left, right;
+        Stack<TreeNode> leftSt = new Stack<TreeNode> ();
+        Stack<TreeNode> rightSt = new Stack<TreeNode> ();
+
+        leftSt.push(root.left);
+        rightSt.push(root.right);
+
+        while(!leftSt.isEmpty()){
+            left = leftSt.pop();
+            right = rightSt.pop();
+
+            if(left == null && right == null) continue;
+            if(left == null || right == null) return false;
+
+            if(left.val != right.val) return false;
+
+            leftSt.push(left.left);
+            leftSt.push(left.right);
+            rightSt.push(right.right);
+            rightSt.push(right.left);
+        }
+        return true;
     }
 }

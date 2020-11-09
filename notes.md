@@ -4,6 +4,8 @@
 
 Java collection: https://www.liaoxuefeng.com/wiki/1252599548343744/1265109905179456
 
+![Hierarchy of Java Collection framework](https://static.javatpoint.com/images/java-collection-hierarchy.png)
+
 - List: ordered collection
 
   - ArrayList: similar as array
@@ -394,14 +396,59 @@ Time complexity: $ O(n) $, space complexity: this means the length of recursion 
 
 Use deque (two direction queue) to store 遍历元素
 
-==Queue/Deque 不可以把null添加进队列中，否则当```poll()``` 方法返回null时，不知道是取到null 或者 队列为空==
+==Queue/Deque 接口 不可以把null添加进队列中，否则当```poll()``` 方法返回null时，不知道是取到null 或者 队列为空==。Queue和deque都是接口，实现接口的类有LinkedList和ArrayDeque，Queue和deque的poll接口 如果没有元素 返回的是null
+
+==Stack类可以存储null, stack.peek方法会throw exception 如果没有元素==
+
+参考 https://www.liaoxuefeng.com/wiki/1252599548343744/1265121791832960
 
 Time complexity: $ O(n) $, space complexity: this means the length of recursion stack, worst $ O(n) $, best $O(logn)$ when a balanced binary tree
 
 #### 101 symmetric tree
 
+Java中使用stack, 推荐使用```Dequq = new LinkedList```，不是是Stack类。因为Stack是JDK1.0的遗留类。
+
+当我们把`Deque`作为`Stack`使用时，注意只调用`push()`/`pop()`/`peek()`方法，不要调用`addFirst()`/`removeFirst()`/`peekFirst()`方法，这样代码更加清晰。
+
 **Solution 1**: recursion
 
+Two trees are same: 1) if root values are same, 2) if right subtrees are mirror of left subtree
 
+Time complexity: $ O(n) $, space complexity: $ O(n) $ 
 
 **Solution 2**: iteration
+
+Use two stacks to store left and right subtrees. If root values are same, add left node and right node of left subtree to stack, and right node and left node of right subtree in stack.
+
+思路错误：
+
+当left and right pointer都指向null时，应该是continue, 而不是直接return
+
+#### 102 level order traversal
+
+Solution 1:
+
+
+
+Solution 2:
+
+最初解法：Use two queues to store treenodes and levels separately. Use another int variable to store current level. When current level is not equal to level pop from queue, it means traversal to a new level. 
+
+Notice that Java object use reference copy. 
+
+```
+List<List<Integer>> list = new ArrayList<>();
+List<Integer> temp = new ArrayList<>();
+temp.add(1);
+list.add(temp);
+temp = new ArrayList<>();  // 有没有这行很重要
+temp.add(2);
+list.add(temp);
+Output: [[1][2]] if new array // [1,2][1,2] if not new array
+```
+
+
+
+思路错误：
+
+当iteration结束时，不能直接返回结果。因为最后一层的结果还没有加入最终结果。
