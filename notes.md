@@ -288,6 +288,10 @@ Time complexity: $ O(n) $
   
   - 注意循环条件，是$i-1$还是$i$, $ left_{max} = max(left_{max}, height[i-1]), right_{max} = max(right_{max}, height[i+1])$ 
 
+#### 738 monotone increasing digits
+
+
+
 ### Tree
 
 #### 094/144/145 binary tree traversal
@@ -311,6 +315,18 @@ Solution
     ​						when current pointer is null, pop an element, add point to right child
 
   - Time complexity: $O(n) $ 
+
+```
+void traverse(TreeNode root) {
+    // 前序遍历 do something here
+    traverse(root.left)
+    // 中序遍历 do something here
+    traverse(root.right)
+    // 后序遍历 do something here
+}
+```
+
+
 
 #### 096 Unique Binary Search Tree
 
@@ -426,13 +442,23 @@ Use two stacks to store left and right subtrees. If root values are same, add le
 
 #### 102 level order traversal
 
-Solution 1:
+Solution 1: recursion
 
+List<List<>>代表最终结果，元素里的第几个结点代表第几层。DFS遍历树，递归将左右结点加入列表。
 
+思路误区：DFS也可以实现层次遍历。结果是List<List<>>, 只要把当前层的结点加入对应第i个元素
 
-Solution 2:
+递归里null值的判断：如果最开始判断root是否为null, 然后递归起点 传递root 和degree。接着判断left right分别是否为null,不是递归left&right 和degree
+
+Solution 2: iteration
 
 最初解法：Use two queues to store treenodes and levels separately. Use another int variable to store current level. When current level is not equal to level pop from queue, it means traversal to a new level. 
+
+==可以看成层次遍历+delimiter==. delimiter是在遍历该层前 the size of the queue. It suggests you how many elements should pop up from queue.
+
+思路错误：
+
+当iteration结束时，不能直接返回结果。因为最后一层的结果还没有加入最终结果。
 
 Notice that Java object use reference copy. 
 
@@ -447,8 +473,90 @@ list.add(temp);
 Output: [[1][2]] if new array // [1,2][1,2] if not new array
 ```
 
+Improved:
 
+One queue to store level is not needed. Can get it from the length of result list.
+
+Use an int variable to store the size of queue. 每一个循环后的The size of queue就是下一层的node数量。循环遍历完该层的结点后，将该层结果加入result.
+
+#### 103 zigzag level order traversal
+
+**Solution 1**: DFS (depth first search) + recursive
+
+和Q102相同的想法。结果是List<List<>>, 只要把当前层的结点加入对应第i个元素。
+
+==递归思路：搞清当前root节点做什么，然后根据定义递归调用子节点。==
+
+该结点：讲该层结点插入result列表，根据level的奇偶性，插入list head or tail.
+
+然后递归结点的左右结点。
+
+Time complexity: $ O(n) $, space complexity: $O(H) $, where H is the height of the tree
+
+**Solution 2**: BFS (breadth first search)
+
+Similar to Q102 iteration solution. BFS + Deque
+
+Intuition: Use an int variable to store the current level. If current level is odd, append to the beginning. If current level is even, append to the last.
+
+Time complexity: $O(n) $, space complexity: $O(n) $ which is the queue size. The queue maximum hold nodes at most across two levels. 
 
 思路错误：
 
-当iteration结束时，不能直接返回结果。因为最后一层的结果还没有加入最终结果。
+Different adding subtree order of odd level and even level. At odd level, first add left and then right subtree to the end of queue. At even level, first add right and then left subtree to the beginning of queue.
+
+#### 104 maximum depth of binary tree
+
+**Solution 1**: recursion
+
+height = max(left subtree height, right subtree height)+1
+
+Time complexity: $ O(n) $ for traverse all elements, Space complexity: depends on the balance state of tree, $ O(n) $ if completely unbalanced and $ O(logn) $ if balanced
+
+**Solution 2**: iteration
+
+BFS with queue, Similar to Q102 iteration solution
+
+#### 105 construct binary tree from preorder and inorder traversal
+
+![1604948523102](C:/Users/wenyu/AppData/Roaming/Typora/typora-user-images/1604948523102.png)
+
+Pre-order: root-left-right
+
+in-order:left-root-right
+
+
+
+#### 226 invert binary tree
+
+**Solution 1**: recursion
+
+递归思路：to invert a node, first invert left child, then invert right child, finally switch two child
+
+语法错误：```switch```在java中是关键词(switch..case), cannot use switch as function name
+
+Time complexity: $O(n) $ as visit every node exactly once, space complexity: $O(h) $ where h is the height of tree
+
+**Solution 2**: iteration (BFS)
+
+The idea is to swap the left and right child of all nodes in the tree. BFS遍历tree, use a queue to store nodes whose children not swap yet. Pop up an element from queue and swap its children. When queue is empty, invertion is done.
+
+这道题不需要delimiter. 每层的结点都是swap children, task没有区别。
+
+### String
+
+#### 003 longest string without repeating characters
+
+Java length vs length()
+
+array.length, string.length()
+
+**Solution 1**: brute force
+
+思路错误：
+
+注意循环变量的上下界，length+1或者length, <或者<=
+
+corner case: Input: " ", expected: 1, output: 0
+
+**Solution 2**: sliding window
