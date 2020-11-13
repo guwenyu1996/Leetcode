@@ -592,17 +592,89 @@ Time complexity: $O(n)$, right pointer loop over the string
 
 #### 005 Longest Palindromic Substring
 
+Java中整数之间的除法，结果的小数位都被舍弃，只返回整数位数字
+
 最长回文字符串
 
 初始想法：将每个index视为回文字符串的中点，向两边延展，如果两边字符相同，则继续延展；如果字符不同则停止。
 
 思路错误：回文字符串可能有奇数有偶数。以上只适用于奇数情况。
 
-Solution 1: brute force
+**Solution 1**: brute force
 
+检查每个子串是否为回文字符串 $ O(n^2) $，检查过程从两侧到中间 检查两侧元素是否相同 $O(n) $
 
+Time complexity: $O(n^3)  $
 
-**Solution 1**: dynamic programming
+**Solution 2**: 中心扩散 
 
-$ P(i, j) = P(i-1, j-1) \text{ and } S_i == Sj$ 
+回文字符串可能是奇数是偶数，奇数中心是一个字符，偶数中心是两个字符。遍历字符串，把每个点当做中心，查看以该点为中心的奇数字符串长度和偶数字符串长度。
 
+Time complexity: $ O (n^2) $ 
+
+难点：数学推导：子字符串长度和字符串起点位置
+
+偶数情况： 0, 1, 2, 3: start-len, start, end, end+len,len=2
+
+奇数情况：0, 1, 2 : start-len, start(end), end+len, len=2
+
+Length of substring: end-start+2(len-1)+1=end-start+2len-1  (Length)
+
+Start point of substring:  (注意Java int除法只保留整数) start - ((length-1)/2)
+
+-1/2这样可以通用奇偶数情况
+
+**Solution 3**: dynamic programming
+
+$ P(i, j) = S_i == Sj \text{ and } P(i-1, j-1)  $ 
+
+state(s, e)
+
+- for s = e, "a" is palindromic
+- for s = e-1, "aa" is palindromic if str[s] == str[e]
+- for s = e-2, "aba" is palindromic if str[s] == str[e] and "b" is palindromic
+- for s = e-3, "abba" is palindromic if str[s] == str[e] and "bb" is palindromic
+
+state transition equation
+
+state(s, e) is true:
+
+- for s=e
+- for s=e-1, if str[s] == str[e]
+- for s=e-2, if str[s] == str[e] and state[s+1, e-1] is true
+
+思路错误：注意填表i, j 遍历的顺序
+
+计算state[s,e]需要先知道state[s+1,e-1]，所以state[s+1,e-1]需要先计算。需要先计算列，e.g.e-1列，然后再计算e列
+
+Time complexity: $O(n^2) $,  space complexity: $ O(n^2) $
+
+#### 013 Roman to Integer
+
+**Solution 1**: from left to right pass
+
+Store Roman-int values the into a mapping so that it is easy to look up. When a smaller symbol is before a larger symbol, need to subtract the smaller one, otherwise just add the symbol.
+
+Time complexity: $ O(n) $
+
+**Solution 2**: from left to right improved
+
+Not only store single value mapping, but also store two digits value mapping. First check if two symbols mapping existed, then check if one symbol mapping existed.
+
+Time complexity: $O(n) $
+
+#### 014 Longest common prefix
+
+代码错误：==使用string.charAt方法之前检查string.length, 不然会抛出异常==
+
+#### 020 valid parentheses
+
+**Solution 1**: stack
+
+Store parenthese to a hashmap to search for a pair easily. If encounter a opening bracket, push it to stack. If encounter a closing bracket, check the element on top of stack. If they are a match, correct. Else it is invalid. In the end, if there is left items in stack, invalid.
+
+思路错误：如果检测到右边括号，而且stack为空，这时也是invalid.
+
+==使用```stack.pop```方法之前需要先检查stack是否为空，不然会抛出异常。==
+
+Time complexity: $O(n) $, space complexity: $ O(n) $
