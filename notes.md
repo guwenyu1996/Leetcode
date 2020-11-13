@@ -553,10 +553,56 @@ array.length, string.length()
 
 **Solution 1**: brute force
 
+Check every substring if they does not carry repeating characters. Use a map to help check (map takes $O(1) $ time to search). 
+
 思路错误：
 
 注意循环变量的上下界，length+1或者length, <或者<=
 
+```
+for(int i = 0; i < s.length(); i ++){
+	for(int j = i + 1; j <= s.length(); j ++){
+```
+
+第二个j, 是下限+1, 所以是<= 而不是<
+
 corner case: Input: " ", expected: 1, output: 0
 
+Time complexity: $O(n^3) $
+
 **Solution 2**: sliding window
+
+Intuition: It's not necessary to repeatedly check a substring if it has duplicate character. If a string $s_{ij}$ is already checked, we then only need to check next character.
+
+Use a hashset as a sliding window. Use two points present the left and right boundary. If the letter at the right point already in the set, 1)move the left point + 1 2) remove letter from set. If not, add letter to set and update the max count. 
+
+Sliding window实际上检测了从i开始 不含重复字符的最长字符串长度。
+
+思路错误：
+
+双指针问题注意上下界 if[i, j] 那么i <=j && j < string.length
+
+Time complexity: $O(2n) $
+
+**Solution 3**: optimized sliding window
+
+Instead of move the left pointer one by one, we can move it directly to the place not contain repeated character. Use a map to store character and its index. 
+
+Time complexity: $O(n)$, right pointer loop over the string
+
+#### 005 Longest Palindromic Substring
+
+最长回文字符串
+
+初始想法：将每个index视为回文字符串的中点，向两边延展，如果两边字符相同，则继续延展；如果字符不同则停止。
+
+思路错误：回文字符串可能有奇数有偶数。以上只适用于奇数情况。
+
+Solution 1: brute force
+
+
+
+**Solution 1**: dynamic programming
+
+$ P(i, j) = P(i-1, j-1) \text{ and } S_i == Sj$ 
+

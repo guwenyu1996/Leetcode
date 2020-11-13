@@ -20,6 +20,7 @@ public class SAPint {
 //                ch[j-1] --;
 //        }
 
+        // 从这个数到最左，每个值-1
         while(i > 0 && ch[i-1] >= ch[i])
         {
             ch[i - 1] --;
