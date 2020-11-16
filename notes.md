@@ -649,6 +649,32 @@ state(s, e) is true:
 
 Time complexity: $O(n^2) $,  space complexity: $ O(n^2) $
 
+#### 006 Zigzag conversion
+
+初始想法：结果存入```List<List<Character>>```, iterate through the string from left to right, use mode to computer which row to put, index % (2*(row-1)), if result is smaller than rownumber, 下降序列，if larger than rownumber, 上升序列，row =row - result.
+
+corner case: rownumber = 1, mode 模的数为0，需要单独if 判断
+
+**Solution 1**: improved left to right pass
+
+Use ```List<StringBuilder>``` rather than nested list. Use a row pointer, and move the point up or down instead of calculation. When the pointer at the beginning or end of array, change direction.
+
+Corner case: if rownumber = 1, just return the string
+
+Tricks: 1. use stringBuilder to concat, append string/char/chararray/stringbuilder
+
+2. The size of list, is the min(rownumber, string.length())
+
+Time complexity: $ O(n) $, space complexity: $ O(n) $
+
+#### 012 Integer to Roman
+
+**Solution 1**: greedy
+
+Use two arrays to store symbols and their represented values in order, from largest to smallest. Look for largest symbol that can fit into it, and then subtract that value, then look for largest symbol can represent the left. 
+
+Time complexity: $O(1) $, cause loop over the finite array.
+
 #### 013 Roman to Integer
 
 **Solution 1**: from left to right pass
