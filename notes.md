@@ -704,3 +704,128 @@ Store parenthese to a hashmap to search for a pair easily. If encounter a openin
 ==使用```stack.pop```方法之前需要先检查stack是否为空，不然会抛出异常。==
 
 Time complexity: $O(n) $, space complexity: $ O(n) $
+
+### Divide and Conquer
+
+#### 215 Kth largest element in the array
+
+Heap (堆) 是一种完全二叉树(除了最下层全满，最下层叶子结点全部靠左)，如果每个结点的值都大于或等于左右孩子结点的值，叫大顶堆。如果每个结点都小于或等于孩子结点的值，叫小顶堆。
+
+堆使用数组存储，使用层次遍历存储堆中元素
+
+**插入元素**：将元素插入至数组末尾，从下到上调整元素顺序，(比较$i$ 和$i/2$ (父节点))，如果没有元素交换，即插入结束
+
+**删除堆中元素**：堆只能删除堆顶元素。将堆顶元素和末尾元素对调，重新对堆(n-1)进行排序。将节点$i$与左右孩子结点($2*i, 2*i+1$)比较，如果结点小于孩子结点则交换。如果没有发生元素交换，排序结束。
+
+**堆排序**：包括两个步骤，建堆，和堆排序。
+
+建堆从无序数组创建堆的过程，从第$n/2$个元素到第$1$ 个元素进行堆化，这些元素都有叶子结点。堆化过程将父结点与左右孩子结点比较，如果小于孩子结点则交换。
+
+堆排序指从堆顶取出最大元素，然后重构堆的过程。这个过程类似删除堆中元素。
+
+数据结构角度理解堆：https://2020.iosdevlog.com/2020/04/08/heap/
+
+Java中利用Priority Queue使用堆：https://blog.csdn.net/u013309870/article/details/71189189
+
+**Solution 1**: heap
+
+Time complexity: adding an element to a heap(size k) is of $O(log k)$, the whole procedure is done n times so time complexity is $O(N*logk)$
+
+Use a heap with smallest element first. Keep the size of heap equal or smaller than k. 最后剩下的元素就是k largest elements.
+
+**Solution 2**: quick sort 快速排序变异
+
+快速排序：
+
+Divide:  将数组划分成以x为标志，x以左的数小于x, x右边的数大于x
+
+![1605541398280](C:/Users/wenyu/AppData/Roaming/Typora/typora-user-images/1605541398280.png)
+
+​			实现：数组的第一个元素设为pivot, 使用两个指针一左一右，右边的指针寻找比x大的元素，左边的指针寻找比x小的元素，交换两指针。当左指针等于右指针，遍历结束，交换pivot和指针。
+
+==需要右边的哨兵先走，这样最后相遇的元素一定小于pivot.== 
+
+Conquer: recursively solve two subarrays
+
+本题寻找第k大元素，如果pivot position < k，没有必要对左边元素排序；如果pivot position > k, 没有必要对右边元素进行遍历。
+
+### Dynamic Programming
+
+#### 1143 Longest common subsequence
+
+最长公共子串
+
+**Solution 1**: dynamic programming
+$$
+\begin{equation}
+state[i][j] = \begin{cases}
+state[i-1][j-1]+1, & \text{if } s1[i] == s2[j]; \\
+max(state[i][j-1], state[i-1][j]), & \text{if } s1[i] != s2[j]
+\end{cases}
+\end{equation}
+$$
+思路错误：$state[i,j] = max{state[i-1][j], state[i][j-1], state[i-1][j-1] + \text{if} (s1[i] == s2[j])}$
+
+不需要从3个里找max, 如果s1[i] == s2[j], 肯定比剩余两个大
+
+优化：我的思路：创建$[m][n]$ 大小的矩阵，index at 0 代表第一个字母 初始矩阵 $s[0][n]$ , $s[m][0]$ ，然后从index = 1之后填表。
+
+可以创建$[m+1][n+1]$ 大小的矩阵，index at 0代表没有字母的情况，从index at 1, 也就是第一个字母开始循环填表
+
+Time complexity: $O(M*N)$, space complexity: $ O(M*N) $
+
+**Solution 2**: dynamic programming with optimized space
+
+In recursion formula, we only need current column and previous column. Therefore can save space by keeping track of last two columns instead of entire 2D array.
+
+Time complexity: $O(M*N)$, space complexity: $ O(min(M,N)) $
+
+### LinkedList
+
+#### 021 Merge Two Sorted List
+
+
+
+#### 206 Reverse linked list
+
+**Solution 1**: iteration
+
+Keep track of three pointers: prev, curr, next
+
+null   1  -> 2  -> null
+
+prev  cu    next
+
+null<- 1         2  -> null
+
+​           prev     cu    next
+
+Change the current node's next pointer to its prev.
+
+代码错误：next指针不能在change之后就改成next.next, 以防next为null
+
+Time complexity: $O(n)$, space complexity: $ O(1) $
+
+**Solution 2**: recursion
+
+Assume node $n_{k+1}$ to $n_m$ have been reversed:
+
+$n_1 $ -> $n_2 $ ... $n_k $ -> $n_{k+1} $ <- ... $n_m$
+
+To reverse $n_k$ and $n_{k+1}$, set $n_k$ to curr, curr.next.next = curr(指向自己), curr.next to null
+
+```
+public ListNode reverseList(ListNode head) {
+        if(head == null || head.next == null)
+            return head;
+        
+        ListNode p = reverseList(head.next);   // 返回头指针
+        head.next.next = head; // reverse
+        head.next = null;      // reverse  
+        return p;                              // 返回头指针
+    }
+```
+
+
+
+Time complexity: $O(n)$, space complexity: $O(n)$ due to recursion stack
