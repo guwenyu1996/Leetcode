@@ -784,7 +784,68 @@ Time complexity: $O(M*N)$, space complexity: $ O(min(M,N)) $
 
 #### 021 Merge Two Sorted List
 
+**Solution 1**: iteration
 
+Use a prehead pointer to store head info. Use a curr pointer to pointing to current node. Compare $l1$ and $l2$, connect l1 to curr if $l1 $ is smaller or equal than $l2$. Repeat this until at least one of $l1$ and $l2$ is null. Then connect the remaining list.
+
+思维陷阱：如何判断开头从$l1$开始或者$l2$开始，不需要复杂的if, 设置一个头指针prehead, 随便指向一个值。最后结果返回prehead.next
+
+代码错误：循环的截止条件，是two pointers are not null, not either pointer to null
+
+Time complexity: $O(m+n)$, space complexity: $O(1) $
+
+**Solution 2**: recursion
+
+Recursion formula:
+
+$new list = list1[0] + mergeList(list1[1:], list2), \text{if } list1[0] < list2[0]$
+
+$new list = list2[0] + mergeList(list1, list2[1:])$
+
+Time complexity: $O(m+n)$, space complexity: $O(m+n) $
+
+#### 083 Delete duplicates from sorted list
+
+**Solution**: iteration
+
+Check if a node is duplicate by comparing its with the node after it. It it is duplicate, we can set the next pointer to next.next(skip the next one).
+
+Time complexity: $O(n)$, space complexity: $ O(1) $
+
+#### 141 Linked list cycle
+
+题意：判断给定链表里是否有环，pos只作为内部变量我们不能拿到
+
+**Solution 1**: hashset
+
+Use a hashset to record each node reference. If the node is in set, means it have been visited, and there is a cycle.
+
+思路错误：Hashset should store ListNode, not Integer(node.val), because nodes with same value could be different node.
+
+Time complexity: $O(n) $, space complexity: $ O(n) $
+
+**Solution 2**: two pointers
+
+Iterate list by two pointers at different speed. If there is a cycle in list, two pointers will eventually meet. Slow pointer move one stage each round, fast pointer jump two hoops each round.
+
+思路错误：
+
+- 什么时候没有环？不是either slow or fast is null, 如果fast is not null, it is not possible for slow to be null
+- slow, fast的初始值不能都设为head, then slow== fast, break the loop. fast should be faster than slow and set to the next of head.
+
+Time complexity: $O(n)$, space complexity: $O(1) $
+
+#### 160 Intersection of two linked lists
+
+**Solution 1**: hashset
+
+Traverse list A and store each node in a hashset. Check every node in list B if it is in the set.
+
+Time complexity: $O(m+n)$, space complexity: $ O(m) $
+
+**Solution 2**: two pointers
+
+思维误区：Length of two lists are different. Traverse A and Traverse B cannot visit the common place in the same time.
 
 #### 206 Reverse linked list
 
