@@ -786,7 +786,7 @@ Time complexity: $O(M*N)$, space complexity: $ O(min(M,N)) $
 
 **Solution 1**: iteration
 
-Use a prehead pointer to store head info. Use a curr pointer to pointing to current node. Compare $l1$ and $l2$, connect l1 to curr if $l1 $ is smaller or equal than $l2$. Repeat this until at least one of $l1$ and $l2$ is null. Then connect the remaining list.
+Use ==a prehead pointer== to store head info. Use a curr pointer to pointing to current node. Compare $l1$ and $l2$, connect l1 to curr if $l1 $ is smaller or equal than $l2$. Repeat this until at least one of $l1$ and $l2$ is null. Then connect the remaining list.
 
 思维陷阱：如何判断开头从$l1$开始或者$l2$开始，不需要复杂的if, 设置一个头指针prehead, 随便指向一个值。最后结果返回prehead.next
 
@@ -826,7 +826,7 @@ Time complexity: $O(n) $, space complexity: $ O(n) $
 
 **Solution 2**: two pointers
 
-Iterate list by two pointers at different speed. If there is a cycle in list, two pointers will eventually meet. Slow pointer move one stage each round, fast pointer jump two hoops each round.
+Iterate list by ==two pointers== at different speed. If there is a cycle in list, two pointers will eventually meet. Slow pointer move one stage each round, fast pointer jump two hoops each round.
 
 思路错误：
 
@@ -843,9 +843,41 @@ Traverse list A and store each node in a hashset. Check every node in list B if 
 
 Time complexity: $O(m+n)$, space complexity: $ O(m) $
 
-**Solution 2**: two pointers
+**Solution 2**: two pointers 链表拼接
 
 思维误区：Length of two lists are different. Traverse A and Traverse B cannot visit the common place in the same time.
+
+http://www.soolco.com/post/64357_1_1.html
+
+When pointer A goes to the end of List A, redirect to the start of B.
+
+When pointer B goes to the end of List B, redirect to the start of A.
+
+情况一：If two lists intersects, pointer A meets pointer B.
+
+![img](http://www.soolco.com/group1/M00/08/E1/rBAADF81QCKAQAssAAHKgD54ifw781.png)
+
+pointer A 走过的：a+c+b; pointer B走过的：b+c+a。最多遍历两遍list
+
+情况二：两链表不相交。每个指针走a+b布后变成null。
+
+循环的停止条件为pointer A != pointer B，要么情况一 两者相遇，要么情况二 两者不相交 都为null
+
+Time complexity: $ O(m+n) $, space complexity: $ O(1) $
+
+**Solution 3**: 消除链表长度差
+
+如果两个链表长度相同，有公共结点，那么分别从头一个一个traverse, 两指针必定会相交。
+
+Time complexity: $O(m)$, space complexity: $ O(1) $
+
+#### 203 Remove linked list elements
+
+To delete a node in the middle is easy, just set the next pointer of current node to the next next node.
+
+To delete a node in the beginning, use a prehead node to store the info.
+
+Time complexity: $O(n)$, space complexity: $ O(1) $
 
 #### 206 Reverse linked list
 
@@ -890,3 +922,67 @@ public ListNode reverseList(ListNode head) {
 
 
 Time complexity: $O(n)$, space complexity: $O(n)$ due to recursion stack
+
+#### 234 Palindrome linked list
+
+我的想法：用stack, 但stack没有array方便
+
+**Solution 1**: convert list to array + two pointers
+
+Copy the linked list to an array. Check if the array is a palindrome. To check the array, use two pointers, one at the start and one at the end. At each step check if values are equal and move pointers inward.
+
+代码错误：
+
+```==``` checks for reference, 如果想要判断Integer的value not reference, 需要用```equals()```
+
+```
+Integer a = 10;
+Integer b = 10;
+
+System.out.println(a == b); //prints true
+
+Integer c = new Integer(10);
+Integer d = new Integer(10);
+
+System.out.println(c == d); //prints false
+```
+
+Time complexity: $O(n)$, space complexity: $O(n)$
+
+**Solution 2**: recursion
+
+直觉：如何能用在链表里用两个指针，一个头一个尾，前后比较？想办法用递归，递归到最后一个，同时保留头指针
+
+Recursion formula:
+
+Check list is palindrome, needs to 1) check list.next is palindrome, 2) if front value equals to end value. 如何能保留头指针？设置一个类变量
+
+Time complexity: $O(n)$, space complexity: $ O(n) $
+
+**Solution 3**: reverse the second-half in-place
+
+Steps: 1) find the end of first half 2) reverse the second half 3) check if there is palindrome 4) restore the list
+
+Step1: to find the end of first half, one way is to count how many nodes in the list, and then reverse the list to get first half. Second way is to use ==two runners pointer== technique. Have 2 runners one fast one slow, the fast one moves 2 nodes, the slow one moves 1 node. By the time the fast runner reaches the end, the slow one moves to middle.
+
+Step3: one pointer at beginning, one pointer at the first half, traverse first half and second half of lists
+
+代码错误：
+
+Step2: reverse the list 
+
+循环什么时候截止？curr != null or curr.next != null? 如果是后者，最后一个element没有反转
+
+prev, curr如何赋值？prev不应该设为head, 因为prev实际为反转列表后的最后一项，实则是null. curr应该设为head
+
+最后return 的是curr 还是prev? curr跳出循环时为null, 应该return prev
+
+#### 237 Delete a node in a linked list
+
+我的解法：
+
+因为我们拿不到要删除结点的上一节点，我们可以把要删除结点之后的值向前挪一位，删除最后一个结点
+
+**Solution**:
+
+将待删除结点的值设为下一个结点的值，将待删除结点的next设为下下个结点
