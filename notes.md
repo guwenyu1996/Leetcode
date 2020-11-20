@@ -782,6 +782,45 @@ Time complexity: $O(M*N)$, space complexity: $ O(min(M,N)) $
 
 ### LinkedList
 
+#### 002 Add two numbers
+
+我的初始解法：将list值转为int, 相加两个int, 讲result转为string后，一位一位生成链表。有一个问题是int list可能是[1,100]位长度，远超过int/long的最大值。计算全部结果后再生成列表的想法不可行。
+
+**Solution**: math
+
+Sum two lists digits by digits. Use an int variable to store the overflow situation. 
+
+我的想法：loop through two lists when either one reaches the end. 第一遍循环：遍历两个list, 第二遍循环：遍历剩余l1, 第三遍循环：遍历剩余l2. 代码重复地方很多。
+
+可以优化成: loop through two lists when both lists reach the end. If one list reaches the end, set the digit of that list to 0. 
+
+思路错误：
+
+- 当l1 + l2 >= 10，而不是>10，需要进位
+- Corner case: [9,9], [9,9,9,9], 当遍历完链表，最后一位需要有进位
+
+#### 019 Remove Nth node from end of list
+
+我的解法：recurssion
+
+This problem wants to remove the Nth element from the end of list. My idea is to use recursion to loop through the end of list, and use a variable to keep the length till end. 
+
+Time complexity: $O(n)$, space complexity: $O(n)$
+
+**Solution 1**: two pass 
+
+In the first pass, find the length of list. Then in the second pass, traverse the list until the element (len - n), then skip the removed element and set the next pointer to next.next.
+
+思路错误：Use a prehead pointer for boundary cases, e.g. remove the head of list. If want to remove the head of list, you want to take the node at -1, point the next of the node at -1  to next.next. However -1 is impossible. So use a prehead pointer. 
+
+Time complexity: $O(n)$, space complexity: $ O(1) $
+
+**Solution 2**: two pointers
+
+Use two pointers, one start earlier with n steps. Then move two pointers together until the fast one reaches the end. At this time, the slow pointer moves to the place where the next is the element to be removed.
+
+Time complexity: $O(n)$, space complexity: $O(1) $
+
 #### 021 Merge Two Sorted List
 
 **Solution 1**: iteration
@@ -893,7 +932,7 @@ null<- 1         2  -> null
 
 ​           prev     cu    next
 
-Change the current node's next pointer to its prev.
+Change the current node's next pointer to its prev. Next 为了保留下一个头结点。
 
 代码错误：next指针不能在change之后就改成next.next, 以防next为null
 
