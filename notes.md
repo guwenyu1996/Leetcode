@@ -851,6 +851,14 @@ Check if a node is duplicate by comparing its with the node after it. It it is d
 
 Time complexity: $O(n)$, space complexity: $ O(1) $
 
+#### 086 Partition list
+
+**Solution**: two pointer
+
+Reform the list into two parts, one with elements less than x, the other one with elements larger than x. Initialize two parts with prehead pointer. Traverse the list. If the node value is smaller than x, connect to the smaller list, otherwise connect to larger list.
+
+Time complexity: $O(n)$, space complexity: $ O(1) $
+
 #### 092 Reverse Linked List II
 
 我的解法：iteration
