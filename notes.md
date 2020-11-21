@@ -851,6 +851,28 @@ Check if a node is duplicate by comparing its with the node after it. It it is d
 
 Time complexity: $O(n)$, space complexity: $ O(1) $
 
+#### 092 Reverse Linked List II
+
+我的解法：iteration
+
+参考 206 reverse linked list iteration 解法，保留四个指针的值
+
+prestart       start     end      end.next
+
+先遍历列表至prestart(start前一个)，reverse start->...-> end这一段，然后设置preStart.next = end, start.next = end.next
+
+思路错误：修改链表时一定不能有环，如果有环没办法判断结尾。如反转链表
+
+1 --> 2 --> 3   -->  4       如果想修改为2 <--3
+
+​          prev     curr    next
+
+2 <--> 3 , 直接修改curr.next = prev是不对的，这样造成列表有环。需要先把2.next = null
+
+**Solution 1**: iteration
+
+
+
 #### 141 Linked list cycle
 
 题意：判断给定链表里是否有环，pos只作为内部变量我们不能拿到
@@ -931,6 +953,14 @@ prev  cu    next
 null<- 1         2  -> null
 
 ​           prev     cu    next
+
+What happens if we use two pointers?
+
+null   1  -> 2  -> null
+
+​         cu       next   (lose info)
+
+Change next.next to curr. But we lose the actual next of next pointer.
 
 Change the current node's next pointer to its prev. Next 为了保留下一个头结点。
 
