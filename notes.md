@@ -288,6 +288,22 @@ Time complexity: $ O(n) $
   
   - 注意循环条件，是$i-1$还是$i$, $ left_{max} = max(left_{max}, height[i-1]), right_{max} = max(right_{max}, height[i+1])$ 
 
+#### 122 Best time to buy and sell stock II
+
+**Solution 1**: peak valley approach
+
+We can view the total profit as $\sum{ (peak - valley)}$. Then looping over the array can be view as the process to find a valley(continuous decrease) and peak (continuous increase). 
+
+代码错误：找peak 和valley的过程中，注意是>= 还是> 算valley。比如corner case[3,3], 如果是>则陷入死循环
+
+Time complexity: $O(n)$, space complexity: $ O(1) $
+
+**Solution 2**: simplify solution 1
+
+Instead of looking for peak and valley, we can add consecutive profit. e.g. [1, 2, 3], valley = 1, peak = 3. But we can calculate as 2-1 + 3-2 = 2. If the second number is larger than the first one, we add the difference to sum.
+
+Time complexity: $O(n)$, space complexity: $ O(1) $
+
 #### 738 monotone increasing digits
 
 
@@ -751,6 +767,24 @@ Conquer: recursively solve two subarrays
 
 ### Dynamic Programming
 
+#### 53 Maximum subarray
+
+我的解法：遍历数组，如果当前值>0, 或者num[i]>num[i+1]。这种解法的问题是拿不到最优解 [4, -1, 3]
+
+**Solution 1**: greedy
+
+遍历array, keep three variables, current value, current local max, and max value. If curr > curr local max, update curr local. If max of two (curr, curr value) > max value, update max value.
+
+Time complexity: $O(n)$, space complexity: $ O(1) $
+
+思路错误：curr local max = curr / local max + curr, 而不是local max (不然会出现local max + 间隔一段后的int)
+
+#### 121 Best time to buy and sell stock
+
+Keep two variables, minprice and maxprofit. Loop over the array, check if current number smaller than minprice, or the diff between curr and minprice is larger than maxprofit.
+
+Time complexity: $O(n)$, space complexity: $ O(1) $
+
 #### 1143 Longest common subsequence
 
 最长公共子串
@@ -1063,3 +1097,19 @@ prev, curr如何赋值？prev不应该设为head, 因为prev实际为反转列�
 **Solution**:
 
 将待删除结点的值设为下一个结点的值，将待删除结点的next设为下下个结点
+
+### DFS
+
+#### 200 Number of islands
+
+这道题实际在求有多少个连通的1区块。
+
+**Solution 1**: dfs
+
+深度遍历图，每遍历到一个1位置时，将所有与之连通的1也遍历一遍。将已经访问过的结点值更改为2，来区分访问/未访问过的结点。循环遍历整个二维数组，对每个值进行一次上面的操作。
+
+Time complexity: $ O(M*N) $, space complexity: $O(M*N)$ by worst case
+
+**Solution 2**: bfs
+
+广度遍历图，每遍历到一个1位置时，将其视为广度遍历的根节点。将已经访问过的结点值更改为2，来区分访问/未访问过的结点。在广度优先搜索时，使用stack, stack里存储每个点的index(row * N + columns)。这样可以从index再得到row, column
