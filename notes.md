@@ -777,7 +777,44 @@ Conquer: recursively solve two subarrays
 
 Time complexity: $O(n)$, space complexity: $ O(1) $
 
-思路错误：curr local max = curr / local max + curr, 而不是local max (不然会出现local max + 间隔一段后的int)
+思路错误：curr local max = curr / local max + curr, 而不是local max (不然数组不连续)
+
+**Solution 2**: dynamic programming
+
+f(i) 表示以第i个数结尾的 连续子数组的最大和
+
+f(i) = max(nums[i], f(i-1) + nums[i]) , 注意不是max(f(i-1), f(i-1)+nums[i])！是以第i个数为结尾，包括第i个数，否则子数组不连续
+
+result = max(f(i))
+
+#### 70 Climing stairs
+
+**Solution 1**: dynamic programming
+
+To reach i-th step there are two ways, 1) take one step from (i-1)th  2) take a step of 2 from (i-2)th
+
+formula: $dp[i] = dp[i-1] + dp[i-2]$
+
+Time complexity: $O(n)$, space complexity: $O(n)$
+
+**Solution 2**: fibonacci number
+
+Simplify solution 1 by keep only two numbers. We don't need entire array, but only last two numbers.
+
+Use another int to store the sum of two. And then update two numbers.
+
+Time complexity: $O(n)$, space complexity: $O(1)$
+
+#### 091 Decode ways
+
+**Solution 1**: 我的思路 dynamic programming
+
+dp[i]表示 substring从0到第i位 解读方式的个数。如果新的一位i 可以被两位数解读，那么substring的末两位要在10和26之间。如果新的一位i可以当做一位数被解读，那么substring[i]一定不能为0
+
+思路错误：
+
+- corner case: 当字符串以'0'开头，一定是无法decode
+- 不是所有dp[i]都能被当做新的一位解读
 
 #### 121 Best time to buy and sell stock
 
