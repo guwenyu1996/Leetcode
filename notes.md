@@ -822,6 +822,18 @@ Keep two variables, minprice and maxprofit. Loop over the array, check if curren
 
 Time complexity: $O(n)$, space complexity: $ O(1) $
 
+#### 139 Word break
+
+**Solution 1**: brute force (recursion)
+
+递归思路：考虑字符串s 是否使用worddict进行拆分
+
+递归关系：假如s从头可以用worddict里的w1拆分，判断剩下的s是否可以用worddict拆分
+
+e.g. s="leetcode", dict=["leet", "code"] 如果leet可以表达s'leet'这部分，剩下的s'code'也能被字典里的数表达吗
+
+**Solution 2**: 
+
 #### 1143 Longest common subsequence
 
 最长公共子串
