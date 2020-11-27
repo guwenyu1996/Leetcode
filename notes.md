@@ -832,7 +832,49 @@ Time complexity: $O(n)$, space complexity: $ O(1) $
 
 e.g. s="leetcode", dict=["leet", "code"] 如果leet可以表达s'leet'这部分，剩下的s'code'也能被字典里的数表达吗
 
-**Solution 2**: 
+边界条件：当s只剩空字符串
+
+Time complexity: $O(2^n)$ (at each position, we can either split or not split it), space complexity: $ O(n) $
+
+**Solution 2**: recursion with memory optimization
+
+可以提升的地方：sol1方法类似backtracking, 需要每次都重算结果，可以把结果存在哪里吗？
+
+使用一个Boolean类型的数组，arr[i]代表string.substring(i) 从i 开始的substring是否能被字典里的词表示
+
+Time complexity: $O(n^3) $ , 头尾两遍遍历字符串$O(n^2)$  , within each iteration we use substring $O(n)$
+
+**Solution 3**: BFS
+
+backtracking的思想是DFS思想，可以用BFS实现这道题。
+
+用queue存储string的index, 表示字符串剩余表达的部分。初始化queue, 将0加入队列。
+
+从队列取出头元素，作为搜索区域的开始下标，用新int变量作为搜索区域的结束下标，遍历字符串。如果这个搜索区域可以被dict表达，将这个搜索区域的结束下标加入队列，作为下一次搜索的开始。
+
+使用一个boolean数组，arr[i]表示是否已经搜索过该节点，避免重复搜索。已经搜索过的结点，结果已经存在queue中。固定搜索区间的开始下标，遍历搜索区间的结束下标。当遍历结束，即开始下标的所有可能性已经遍历过，标志开始下标为visited.
+
+Time complexity: $ O(n^3) $, space complexity: $  O(n) $
+
+**Solution 4**: dynamic programming
+
+
+
+#### 322 Coin change
+
+**My solution**: dynamic programming (bottom up approach)
+
+定义状态：dp[i] 表示当amount = i 时，最少能用几枚硬币凑出。如果无法凑出，那么值为-1.
+
+Base state: dp[0] = 0
+
+状态转移：dp[i] = dp[j] + 1 (if 1: j-i in coin list and dp[j] >= 0)
+
+Time complexity: $O(S*n)$, where s denotes the number of coin types, space complexity: $ O(n) $
+
+Solution 1: improved my solution
+
+可以改进的地方：初始dp[i]不为0，而是max_int。这样的话不用对每一个无解状态都修改为-1, 而是在最后返回值判断是不是max_int 从而得知有没有解.
 
 #### 1143 Longest common subsequence
 
