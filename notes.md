@@ -306,7 +306,29 @@ Time complexity: $O(n)$, space complexity: $ O(1) $
 
 #### 738 monotone increasing digits
 
+#### 915 Partition array into disjoint intervals
 
+**My solution**: dynamic programming
+
+我们希望找到max(left) <= min(right)这样一个index
+
+定义状态：leftMax[i] 表示从左边开始遍历字符串string[0, i] 左区间的最大值
+
+rightMin[i]表示从尾部开始遍历字符串[i, end] 右区间的最小值
+
+初始状态： leftMax[0] = array[0], rightMin[last] = array[last]
+
+状态转移方程：leftMax[i] = max(leftMax[i-1], arr[i])
+
+rightMin[i] = min(rightMin[i+1], arr[i])
+
+结果：做头遍历 第一个i满足leftMax[i] <= rightMin[i+1]
+
+Time complexity: $ O(n) $, space complexity: $ O(n) $
+
+**Solution 1**: simply two arrays by using one array
+
+可以只保留rightMin. 在最后一遍从左到右找到满足的i 时，用一个变量存储left_max.
 
 ### Tree
 
@@ -721,6 +743,32 @@ Store parenthese to a hashmap to search for a pair easily. If encounter a openin
 
 Time complexity: $O(n) $, space complexity: $ O(n) $
 
+#### 067 Add binary
+
+**Solution 1**: bit by bit computation
+
+Time complexity: $O(max(M,N))$, space complexity: $ O(max(M,N)) $
+
+#### 415 Add strings
+
+整体思路和 002 Add two nums / 067 Add binary 类似，一位一位相加。
+
+Char to int: ```Character.getNumericValue(char)``` 或者  ```char - '0'```
+
+char array to int: ```Integer.parseInt(new String(charArray)) ```
+
+从末尾到头遍历两个string, 直到两个全部遍历完。把x赋值为s1的当前index, 如果s1已经到头，那么x为0；同理把y赋值为s2的当前index. 相加两个index, 注意加法进位情况。
+
+遍历结束后，注意最后一位是否需要进位。
+
+Time complexity: $ O(max(M,N)) $, space complexity: $ O(max(M,N))$
+
+代码错误：
+
+char无法赋值为''。char的初始值为"\u0000"，which is a Unicode value denoting ‘null‘ or 0 in decimal. 
+
+不要用char[]来一位一位存string了，直接用==StringBuilder==
+
 ### Divide and Conquer
 
 #### 215 Kth largest element in the array
@@ -766,6 +814,16 @@ Conquer: recursively solve two subarrays
 本题寻找第k大元素，如果pivot position < k，没有必要对左边元素排序；如果pivot position > k, 没有必要对右边元素进行遍历。
 
 ### Dynamic Programming
+
+动态规划格式：
+
+定义状态：数组表达的是什么
+
+初始状态： base state情况
+
+状态转移方程：如何用上一个状态得到下一个状态
+
+结果：
 
 #### 53 Maximum subarray
 
@@ -858,7 +916,21 @@ Time complexity: $ O(n^3) $, space complexity: $  O(n) $
 
 **Solution 4**: dynamic programming
 
+string[0, i] 可以被拆分成两部分s1和s2. s1 = string[0, j] 以及 s2 =[j, i]。 如果s1已知可以被拆分，并且s2在字典里，那么string[o, i]可以被表达
 
+定义状态：boolean dp[i] 表示 string[0, i] 是否可以被表达
+
+初始状态：dp[0] = true
+
+状态转移：if dp[j] = true and string[j, i] in dict, dp[i] = true
+
+结果：判断dp[s.length()+1]是否为true
+
+Time complexity: $ O(n^3) $, space complexity: $ O(n) $
+
+==关于遍历字符串时的截止条件，下标<= 或者 <==
+
+注意string.substring(i,j) 截取了string[i, j) 部分，即前开半闭区间。如果遍历区间的开始位置i, 需要满足i < s.length()。如果遍历区间的结束位置j, 则需要满足j <= s.length()
 
 #### 322 Coin change
 
@@ -1188,6 +1260,8 @@ prev, curr如何赋值？prev不应该设为head, 因为prev实际为反转列�
 **Solution**:
 
 将待删除结点的值设为下一个结点的值，将待删除结点的next设为下下个结点
+
+
 
 ### DFS
 
