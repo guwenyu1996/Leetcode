@@ -218,7 +218,22 @@ Corner case:
 
 #### 039 combination sum
 
+Solution: backtracking
 
+画出这道题的树形图
+
+思路错误：
+
+- 为了防止加入重复组合([2,2,3], [3, 2, 2])，加入的数字必须>=之前加入的数。比如加入3， 就不能再加入2了。需要用一个变量存开始可用的数字下标。
+- when to throw array impossible numbers?  对这个子树的所有解都尝试过之后，从代码的角度来说就是，当递归语句执行结束之后，需要清除刚刚加入的元素。否则最后结果会包含所有尝试过的路径。
+- 找到一组解，需要clear掉结果吗？不需要。因为没有从head开始遍历solution tree, 递归栈里并不为空。不能clear掉结果。
+- java 返回值为void的函数，可以直接```return; ```
+
+代码错误：
+
+- 因为List存储的是地址，不能直接把List<>加入result；否则后续如果修改list, result里面的数组也会被修改。需要加入new (list).
+
+Time complexity: $ O(N^{T/M + 1}) $, where N be the number of candidates, T be the target value, M is the minimal value among candidates, space complexity: $ O(T/M) $, the depth of tree
 
 #### 041 First missing Positive
 
@@ -303,6 +318,14 @@ Time complexity: $O(n)$, space complexity: $ O(1) $
 Instead of looking for peak and valley, we can add consecutive profit. e.g. [1, 2, 3], valley = 1, peak = 3. But we can calculate as 2-1 + 3-2 = 2. If the second number is larger than the first one, we add the difference to sum.
 
 Time complexity: $O(n)$, space complexity: $ O(1) $
+
+#### 216 Combination sum III
+
+参考 039 combination sum
+
+**Solution 1**: backtracking
+
+
 
 #### 738 monotone increasing digits
 
@@ -1263,7 +1286,19 @@ prev, curr如何赋值？prev不应该设为head, 因为prev实际为反转列�
 
 #### 445 Add Two Numbers II
 
+**Solution 1**: reverse the list
 
+问题可以被拆分成：1) reverse link list (least significant digits first)  2) add two nums
+
+Time complexity: $O(N1+N2)$, space complexity: $ O(1) $
+
+**Solution 2**: without reverse the list
+
+
+
+**Solution 3**: stack
+
+把链表加入栈，利用栈先进后出的特点来反转列表。从栈顶取元素，一位一位相加。
 
 ### DFS
 
