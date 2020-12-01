@@ -83,7 +83,7 @@ Solution 1: separately loop two array
 
 Time complexity: $O(log(min(m,n)))$ , the length of array to search is $min(m,n)$, log is applied because of binary search
 
-#### 011 
+#### 011 Contain with most water
 
 Goal is to minimize $(j-i)*min(a_j, a_i)$
 
@@ -313,6 +313,20 @@ Time complexity: $ O(n) $
   
   - 注意循环条件，是$i-1$还是$i$, $ left_{max} = max(left_{max}, height[i-1]), right_{max} = max(right_{max}, height[i+1])$ 
 
+#### 056 Merge Intervals
+
+Solution 1: brute force
+
+[1, 3], [2, 6], [8, 10]
+
+
+
+Solution 2: sort
+
+代码错误：
+
+- 如何删除Array(int[])中指定下标的元素？可以利用```ArrayList.toArray()```方法
+
 #### 078 Subsets
 
 **Solution 1**: dynamic programming
@@ -339,7 +353,35 @@ Backtracking is an algorithm for finding all solutions by exploring all potentia
 
 Time complexity: $ O(N*2^N)$, space complexity: $ O(N*2^N)$
 
+#### 088 Merge Sorted Array
 
+**My solution**: 
+
+拷贝原数组，利用two pointers 对新拷贝数组 和 s2进行比较，在原数组进行修改。
+
+Time complexity: $O(m+n)$, space complexity: $ O(m) $
+
+==Java ```Arrays.copyOfRange()``` 或者```Arrays.copyOf()``` 是shallow copy. ```Object.clone()``` 对于primitive types 基本数据类型是深拷贝，对于non-primitive types是浅拷贝。==
+
+**Solution 1**: merge and sort
+
+合并两数组，利用排序算法得到sorted新数组。但这种解法没有利用两数组已经排序过的特性。
+
+Time complexity: $O((n+m)log(n+m))$
+
+**Solution 2**: two points from beginning
+
+Make a copy of num1 array. Maintain two pointers p1 for num1copy, p2 for num2. Compare two arrays from beginning, and push the smaller element in the original array.
+
+Time complexity: $O(m+n)$, space complexity: $ O(m) $
+
+**Solution 3**: two pointers from end
+
+从尾开始修改num1 array，避免影响num1开头的数. 利用two pointers, 一个指针指向num1的末尾，一个指针指向num2的末尾。再使用一个指针存储修改的index下标。从末尾循环比较两数组，知道其中一个到头。将num2的剩余数字拷贝到num1.
+
+为什么只修改num2? 如果num1没有遍历完，则剩下num1的数字已经在num1存储好，不需要额外修改。如果num2没有遍历完，则只剩num2，需要将剩余数字拷贝。
+
+Time complexity: $O(m+n)$, space complexity: $ O(1) $
 
 #### 122 Best time to buy and sell stock II
 
@@ -1355,3 +1397,9 @@ Time complexity: $ O(M*N) $, space complexity: $O(M*N)$ by worst case
 **Solution 2**: bfs
 
 广度遍历图，每遍历到一个1位置时，将其视为广度遍历的根节点。将已经访问过的结点值更改为2，来区分访问/未访问过的结点。在广度优先搜索时，使用stack, stack里存储每个点的index(row * N + columns)。这样可以从index再得到row, column
+
+### Design
+
+#### 146 LRU Cache
+
+Solution: hashmap + double linkedlist
