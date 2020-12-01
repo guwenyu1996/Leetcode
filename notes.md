@@ -235,6 +235,16 @@ Solution: backtracking
 
 Time complexity: $ O(N^{T/M + 1}) $, where N be the number of candidates, T be the target value, M is the minimal value among candidates, space complexity: $ O(T/M) $, the depth of tree
 
+#### 040 Combination Sum II
+
+和39的区别：candidates里每个数只能用一遍，并且结果不能重复
+
+思路错误：
+
+- candidates里包括重复数字，最终结果重复
+
+  如何避免这个情况？假如有重复数字，需要跳过第二次对该数字的遍历。第一次照常执行。
+
 #### 041 First missing Positive
 
 **Solution**:
@@ -303,6 +313,34 @@ Time complexity: $ O(n) $
   
   - 注意循环条件，是$i-1$还是$i$, $ left_{max} = max(left_{max}, height[i-1]), right_{max} = max(right_{max}, height[i+1])$ 
 
+#### 078 Subsets
+
+**Solution 1**: dynamic programming
+
+nums [1, 2, 3]
+
+| nums      | subsets                                             |
+| --------- | --------------------------------------------------- |
+| []        | []                                                  |
+|           | [], [] (复制一遍当前结果)                           |
+| [1]       | [], [1]                                             |
+|           | [], [1],  **\|**  [], [1]                           |
+| [1,2]     | [], [1],   [2], [1,2]                               |
+|           | [], [1],   [2], [1,2]  **\|** [], [1],   [2], [1,2] |
+| [1, 2, 3] | [], [1],   [2], [1,2], [3], [1,3],   [2,3], [1,2,3] |
+
+Start with empty subsets. At each step, take one element from nums array, generate new subsets from existing subsets. Copy current subsets and add new element to each element of copy subsets.
+
+Time complexity: $ O(N*2^N)$, space complexity: $O(N*2^N)$
+
+**Solution 2**: backtracking
+
+Backtracking is an algorithm for finding all solutions by exploring all potential candidates. If the solution candidate turns to be not a solution (or at least not the last one), backtracking algorithm discards it by making some changes on the previous step.
+
+Time complexity: $ O(N*2^N)$, space complexity: $ O(N*2^N)$
+
+
+
 #### 122 Best time to buy and sell stock II
 
 **Solution 1**: peak valley approach
@@ -325,7 +363,9 @@ Time complexity: $O(n)$, space complexity: $ O(1) $
 
 **Solution 1**: backtracking
 
+画出决策树，决策树第i层代表解的第i个数。
 
+Number of exploration $ P(9, K) = \frac{9!}{(9-K)!} $, each exploration takes constant time. So time complexity: $O(\frac{9!}{(9-K)!})$, space complexity: $ O(K) $
 
 #### 738 monotone increasing digits
 
