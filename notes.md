@@ -313,19 +313,61 @@ Time complexity: $ O(n) $
   
   - 注意循环条件，是$i-1$还是$i$, $ left_{max} = max(left_{max}, height[i-1]), right_{max} = max(right_{max}, height[i+1])$ 
 
-#### 056 Merge Intervals
+#### 054 Spiral Matrix
 
-Solution 1: brute force
+**Solution 1**: simulation
 
-[1, 3], [2, 6], [8, 10]
+这种解法和人的直觉类似。从头开始，按照一个方向走，走到头/遇到之前走过的，调转方向。
 
+所以我们需要一个boolean[] [] 数组，来存放这个数字是否已经被访问过。同时用两个int[]存储上下左右四个方向，即行列值变化。
 
+对每个结点执行如下操作。如果该节点在这个方向的下一节点没有超出边界，并且之前也没有访问过，则继续按照这个方向前行。否则换一个新方向。
 
-Solution 2: sort
+Time complexity: $O(n)$, space complexity: $ O(n) $
 
 代码错误：
 
-- 如何删除Array(int[])中指定下标的元素？可以利用```ArrayList.toArray()```方法
+二维数组行列 array[row] [col]
+
+![img](http://c.biancheng.net/uploads/allimg/181016/3-1Q016131301F7.jpg)
+
+初始java数组 ```int[] array = new int[5]{1, 2, 3, 4, 5} // {1, 2, 3, 4, 5}```
+
+**Solution 2**: layer by layer
+
+我们把结果想成一个不断以左上顶点(r1, c1)和右下顶点(r2, c2)为顶点的正方形嵌套。一个正方形嵌套一个正方形，直至最后正方形为空。如何得到正方形呢？四个方向遍历。
+
+思路错误：
+
+- 当input不是一个正方形，最后会出现(r1, c1) (r2, c2)同行/同列的情况。如果按四个方向遍历的话，最终结果会加入两遍正方形(直线)。如何避免？
+
+  如果两顶点 既不同行，也不同列，遍历左上方向。否则只遍历右下方向。
+
+代码错误：
+
+- 区分 for(), while.
+
+   for循环的截止条件是<= / <?    如果用while 实现for循环，是<= / ?
+
+Time complexity: $O(n)$, space complexity: $ O(1) $
+
+#### 056 Merge Intervals
+
+**Solution 1**: sort
+
+对原始intervals进行排序。排序过后，不用将每个数组与所有数组进行比较，而是将它和之前比他小的数组进行比较。排序后的一个性质：[0, 1], [0, 2]  a[0] <= b[0]
+
+将interval头元素加入一个新链表。链表里存储之前已经比较过的数组。对interval数组进行遍历，将每个数组与之前比较过的最后一个进行比较。判断他们是否重合。如何判断重合，只需判断the current.start与prev.end的关系（注意，排序过的数组，prev.start <= current.start）。
+
+代码错误：
+
+- 如何对Array进行排序，并使用lambda比较器？
+
+  ```Arrays.sort(intervals, (a, b) -> Integer.compare(a[0], b[0]));```
+
+- 如何删除Array(int[])中指定下标的元素？创建一个list, list to array可以利用```ArrayList.toArray()```方法。如果转成2D Array, 需要指明array size. ```xxx.toArray(new int[5][])```
+
+Time complexity: $ O(nlogn) $, space complexity: $ O(logn) $ sort itself takes $O(logn)$ space.
 
 #### 078 Subsets
 
@@ -1402,4 +1444,64 @@ Time complexity: $ O(M*N) $, space complexity: $O(M*N)$ by worst case
 
 #### 146 LRU Cache
 
+这道题要求 下面这三个操作用$ O(1) $时间完成。
+
+- get the key/ check if exists
+- put a key
+- delete the first add key
+
 Solution: hashmap + double linkedlist
+
+为什么需要双头链表？如果需要在尾部插入元素，在头部删除元素，需要知道结点的前驱后继，方便修改head, tail指针。
+
+为什么需要hashmap? check / get操作需要$ O(1) $ 的复杂度，单有double linkedlist 从头到尾遍历需要 $ O(n) $
+
+Steps:
+
+1. 设计链表结点的数据结构
+
+   ```
+   class Node{
+   	int key, value;
+   	Node prev, next;
+   }
+   ```
+
+2. 设计链表的数据结构
+
+   使用双向链表，尾端存储最新的数据，头端存储最久的数据。
+
+   ```
+   class DoubleList{
+   	Node head, tail;
+   	int size;
+   	
+   	// addTail(Node node);
+   	// removeNode(Node node);
+   	// removeHead();
+   }
+   ```
+
+3. 设计cache的数据结构
+
+   ```
+   class Cache{
+   	DoubleList list;
+   	int capacity;
+   	// int get(int key);
+   	// int put(int key, int value);
+   }
+   ```
+
+   思路错误：
+
+   1. 在cache搜索元素，不能光返回value, 还需要将该节点的顺序调整为末尾。如何调整顺序？先删除该结点，然后将结点插入末尾。
+   2. 在cache中插入元素。如果链表中已经有同个key了，需要替换同个key的value值。
+
+   代码错误：
+
+   1. 用this指代类变量
+   2. 区别key/value
+
+Time complexity: $O(1)$, space complexity: $ O(n) $
+

@@ -2,6 +2,10 @@ System design
 
 #### Scalability 
 
+video: https://www.youtube.com/watch?v=-W9F__D3oY4
+
+slides: http://cdn.cs75.net/2011/summer/lectures/9/lecture9.pdf
+
 Q: What if website faces a surge of requests
 
 ##### Ways of scaling
@@ -66,13 +70,38 @@ Caching:
 
 ##### Data replication
 
-Master/slave architecture: master database is where user read/write data. One master database has multiple slave databases, whose goals is to copy every row in the master db. In theory master and slave db are identical. 
+**Master/slave architecture**: master database is where user read/write data. One master database has multiple slave databases, whose goals is to copy every row in the master db. In theory master and slave db are identical. 
 
 Advantage: 
 
 - when master db is down, simply use any of slave db.
 - when face a surge of queries, load balancer can distribute load across multiple servers
-- suitable for cases when more read heavy and less write heavy
+- suitable for cases when more read heavy and less write heavy, e.g. insert/delete/update operation goes to server 4, and search goes to server 2/3/4
 
 Disadvanatge:
 
+- the server for updating might die
+
+  ![1606933367556](C:/Users/wenyu/AppData/Roaming/Typora/typora-user-images/1606933367556.png)
+
+**Master/master architecture**: two master databases for updating operations. When write to server 1, the query gets replicated on server 2.
+
+![1606933399531](C:/Users/wenyu/AppData/Roaming/Typora/typora-user-images/1606933399531.png)
+
+**Active/active mode**: have two servers that are actively listening to connections, either one of which can receive packets and send to backend servers. Two load balancers send heartbeat message to each other to check if the other is active.
+
+![active_active_high_availability_cluster_load_balancer](https://www.jscape.com/hubfs/images/active_active_high_availability_cluster_load_balancer.png)
+
+**Active/passive mode**: one server in active state and one in passive state. If the active server dies, the passive server will be promoted as active.
+
+![active_passive_high_availability_cluster](https://www.jscape.com/hubfs/images/active_passive_high_availability_cluster.png)
+
+##### Partitioning
+
+
+
+![1606933480468](C:/Users/wenyu/AppData/Roaming/Typora/typora-user-images/1606933480468.png)
+
+Example: how to design a sticky session
+
+![1606935151167](C:/Users/wenyu/AppData/Roaming/Typora/typora-user-images/1606935151167.png)
