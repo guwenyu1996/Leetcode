@@ -1505,3 +1505,112 @@ Steps:
 
 Time complexity: $O(1)$, space complexity: $ O(n) $
 
+### Greedy
+
+#### 055 Jump game
+
+**Solution 1**: backtracking, time limit exceeds
+
+画出决策树，从第一个节点出发，走遍所有可能的情况。
+
+思路错误：
+
+1. 从当前格子i能够走到的格子范围是什么？
+
+   左边界: i + 1，而不是i
+
+   右边界: i + maxStep和格子长度的最小值，按照最大步数走有可能走过边界。
+
+   同时，从最右试到最左，比左到右效率要高。
+
+Time complexity: $O(2^n)$ (there are $2^n$ ways of jumping from the first position to last), space complexity: $O(n) $
+
+**Solution 2**: backtracking + memory
+
+
+
+#### 435 Non-overlapping intervals
+
+区间调度问题
+
+给你很多[start, end]的闭区间，请算出这些区间里最多有几个互不相交的闭区间。
+
+e.g. intervals = [1, 3], [2, 4], [3,6] ，这些区间里最多有两个区间互不相交。即[1, 3], [3, 6]
+
+贪心解法：
+
+1. 将数组排序，按每个区间的end升序排序
+2. 从interval区间选一个区间x, 这个区间是当前区间里结束最早的
+3. 把所有与x相交的区间从集合中删除
+4. 重复2,3, 直到intervals为空。之前选出的x就是最大不相交子集
+
+优化解法：
+
+1. 将数组排序，按每个区间的end升序排序
+2. 从interval区间选一个区间x, 这个区间是当前区间里结束最早的
+3. 寻找下一个与x不相交的区间，更新x
+4. 重复2,3 知道数组结束
+
+- 利用排序完数组按end升序排列的性质。为什么按end?
+
+  如果end越小，它的补集越大，也就是留给其它数组的位置最大。
+
+- 如何判断两区间相交？[start1, end1], [start2, end2] (已经排序过，所以end1 <= end2)，
+
+  只要start2 < end1 (是<= 或者< 具体看题目情况)，则两数组相交。
+
+- 需要对每一个x, 都遍历一遍所有数组吗？
+
+  假设有已经排序过的数组A, B, C。会有AC相交，但是BC不相交的情况吗？
+
+  AC相交 -> c. start < a.end, 但是a.end <= b.end, 所以c.start < b.end，BC也相交
+
+  所以不需要把每一个x, 都与所有区间进行核对。如果发现一个新的区间，不与x相交，则更新x
+
+这道题求最少去掉几个元素，可以使剩下区间不相交。也就是求最大不相交区间的补集个数。
+
+**Solution 1**: greedy
+
+代码错误：
+
+- 如何用Lambda写compartor 
+
+  ```Arrays.sort(intervals, (int[] a, int[] b) -> Integer.compare(a[1], b[1]));``` 不要用```a[1] - b[1]``` 可能会有int溢出的情况
+
+- 如果将x设置为array的第一个，需要先判断数组是否为空
+
+Time complexity: $O(nlogn)$, space complexity: $ O(nlogn) $
+
+**Solution 2**: dynamic programming
+
+按照start point对数组进行排序。
+
+定义状态：dp[i] 表示从0到第i个数组，最大不重合的区间数。
+
+初始状态：dp[0] = 1
+
+状态转移方程：if j <i && i,j 不相交，dp[i] = max{dp[j]} + 1
+
+否则dp[i] = 1
+
+结果：dp[intervals.length-1]得到最大不重合的区间数，用intervals.length - dp[intervals.length-1]得到需要去掉的区间数。
+
+Time complexity: $O(n^2)$, space complexity: $O(n)$
+
+代码简化：不用给所有dp[i]都初始为1。设一个max=0, 如果区间i与所有区间j相交，那么dp[i] = max+1= 1
+
+#### 452 Minimum Number of Arrows to Burst Ballons
+
+这道题求，最少有几个相交 interval。第一箭，扎掉尽可能多气球。之后一箭，再扎掉尽可能多气球。
+
+**Solution 1**: greedy
+
+如果按**左**端升序，可能会出现[0,9], [0,6], [7,8], 即前面包后面的情况
+
+需要维护一个右边界最小值。如果区间.start > 右边界最小值，则新区间不与之前的重合。更新count。如果重合，需要更新右边界最小值。
+
+如果按**右**端升序，不可能出现前面包后面的情况，只需要比较新区间start 和 上一个区间.end。
+
+区间 A     -------
+
+区间 B          --------
