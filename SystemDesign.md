@@ -105,3 +105,6 @@ Disadvanatge:
 Example: how to design a sticky session
 
 ![1606935151167](C:/Users/wenyu/AppData/Roaming/Typora/typora-user-images/1606935151167.png)
+
+### Scalability
+

@@ -1519,7 +1519,7 @@ Time complexity: $O(1)$, space complexity: $ O(n) $
 
    左边界: i + 1，而不是i
 
-   右边界: i + maxStep和格子长度的最小值，按照最大步数走有可能走过边界。
+   右边界: i + maxStep和格子长度的最小值(nums.length - 1而不是nums.length，这里用的是数组下标)，按照最大步数走有可能走过边界。
 
    同时，从最右试到最左，比左到右效率要高。
 
@@ -1527,7 +1527,50 @@ Time complexity: $O(2^n)$ (there are $2^n$ ways of jumping from the first positi
 
 **Solution 2**: backtracking + memory
 
+在sol1里，我们会重复回溯到某个结点，造成不必要的时间浪费。
 
+可以用一个boolean[]数组，存放该节点是否已经检查过。检查过的结点就不需要再重复回溯了。
+
+Time complexity: $O(n^2)$ (for every element, we check next element j to its right, j can be max n elements), space complexity: $O(n)$
+
+**Solution 3**: dynamic programming bottom up
+
+和sol2类似，但是用一个enum[] 类型数组，更新该节点情况。
+
+enum: good, bad, unknown. 一个位置是good, 说明从它可以走到结尾。
+
+Time complexity: $O(n^2)$, space complexity: $ O(n) $
+
+**Solution 4**: dynamic programming bottom down
+
+定义状态：enum[] 表示从该结点是否可以走到末尾
+
+初始状态： enum[last] = GOOD
+
+状态转移方程：从尾向头遍历数组。当前处于结点i, 如果从结点i可以走到good结点，则i结点也为good.
+
+结果：enum[0] good or bad?
+
+Time complexity: $O(n^2)$, space complexity: $ O(n) $
+
+**Solution 5**: greedy 
+
+依次遍历数组中每一个位置，并且用一个变量存储 最远可以到达的位置。如果位置>=数组中最后一个位置，说明尾结点可达。
+
+从头到尾遍历数组：
+
+用一个变量存储 最远可以到达的位置。依次遍历数组中每一个位置，如果当前位置 <= 最远可以到达的位置，说明当前位置可达，更新最远可以到达的位置。如果位置>=数组中最后一个位置，说明尾结点可达。
+
+从尾到头遍历数组：
+
+用一个变量i存储 从i可以到达数组最后一个位置。i初始为最后位置。从尾到头 依次遍历数组中元素，如果当前位置可以到达i，则更新i为当前位置。如果i最后为0, 说明尾结点可达。
+
+思路错误：
+
+- 遍历数组中每一个位置 还是遍历到倒数第二个位置？每一个位置
+- 如何判断尾结点可达？是位置>=数组中最后一个位置，而不是==.
+
+Time complexity: $O(n)$, space complexity: $ O(1) $
 
 #### 435 Non-overlapping intervals
 
@@ -1614,3 +1657,88 @@ Time complexity: $O(n^2)$, space complexity: $O(n)$
 区间 A     -------
 
 区间 B          --------
+
+### Stack
+
+#### 496 Next Greater Element I
+
+**Solution 1**: brute force
+
+双重遍历两个数组，对于每一个s1数组里的元素，遍历一遍s2, 找出它在s2中的位置，以及是否在该位置右边存在一个比它大的数。
+
+Time complexity: $O(m*n)$, space complexity: $ O(m) $
+
+**Solution 2**: brute force + hashmap
+
+还是双重遍历两个数组的思想。但是可以提升线性遍历s2的效率。用一个hashmap 存s2 (num, index)。这样对于每一个s1数组里的元素，我们不用从头遍历s2, 而是在map里拿到它在s2的index, 从当前index之后遍历。
+
+Time complexity: $O(m*n)$, space complexity: $ O(n) $
+
+**Solution 3**: monotonous stack 单调栈
+
+单调栈模板
+
+- 从**左到右**维护单调递减栈， 找元素右侧区域，第一个比自己大的位置
+
+  使用==单调递减栈==，从栈底到栈顶，单调递减，表示从左开始还没找到下一个比它大的数字。用一个hashmap存返回结果 (num, next great num)。
+
+  从头遍历s2。
+
+  - 栈顶元素<当前元素，右边数字比当前元素大，弹出栈顶元素，更新map。直到栈顶元素>当前元素。将当前元素加入栈。
+  - 栈顶元素>当前元素。将当前元素加入栈。寻找下一个可能。
+
+  遍历结束后，栈可能还有剩余元素。这些是没有找到next great num的元素。将他们取出，并标记结果。
+
+- 当前项向右找第一个比自己大的位置 —— 从**右向左**维护一个单调递减栈
+
+  使用==单调递减栈==，从栈底到栈顶，单调递减，表示在该数右边比它大的数。
+
+  从尾遍历s2。
+
+  - 栈顶>当前，右边数字比当前元素大。比当前元素大的下一个元素是栈顶元素。并把当前元素入栈。
+  - 栈顶<当前，右边数字比当前数字小。弹出所有比当前数字小的栈顶元素。如果栈为空，说明不存在当前元素大的下一个元素。
+
+这道题使用从左到右+hashmap的方法。
+
+Time complexity: $O(m+n)$, space complexity: $ O(m+n) $
+
+#### 503 Next Greater Element II
+
+Solution 1: stack with double length array
+
+
+
+Time complexity: $ O(n) $, space complexity: $ O(n) $
+
+#### 739 Daily Temperatures
+
+**Solution 0**: brute force
+
+双重遍历数组，对于数字里每一个元素，遍历它右边的部分，寻找下一个比它大的元素。
+
+Time complexity: $O(n^2)$, space complexity: $ O(n) $
+
+**Solution 1**: monotonous stack
+
+使用单调递减栈，从右向左遍历数组。
+
+- 栈顶>当前，说明在右侧存在比当前数字大的元素，且该元素就是栈顶。将元素入栈。
+- 栈顶<=当前，弹出栈顶。不断重复比较，直到栈顶>当前。将元素入栈。
+
+思路错误：
+
+- 循环遍历栈，并将栈顶元素与当前元素比较，这个过程的遍历条件是？
+
+  栈不为空，并且栈顶元素<当前元素。使用```stack.pop()/peek()```前需要检查栈是否为空
+
+- temperature中有可能有重复数字
+
+  不能从左到右遍历+hashmap这种方法。否则，如果存在相同元素，map只能存储一个值。
+
+- 注意比较关系，栈顶与当前元素是<= 还是 < 弹出？题中寻找warmer, 所以是<=
+
+代码简化：
+
+- 栈里不用同时存储下标和温度，只需要存储下标，通过下标可以找到当天温度。
+
+Time complexity: $O(n)$ (一共有n个元素，最多pop n次), space complexity: $ O(n) $
