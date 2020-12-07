@@ -896,6 +896,53 @@ Time complexity: $O(n) $, space complexity: $ O(n) $
 
 Time complexity: $O(max(M,N))$, space complexity: $ O(max(M,N)) $
 
+#### 076 Minimum Window Substring
+
+==滑动窗口思路==
+
+1. 使用双指针，维护一个左闭右开区间[left, right), left = right = 0
+2. 不断扩大右指针，直至窗口中的数据满足要求
+3. 停止right，增加left指针缩小窗口，直到窗口中的数据不符合要求。
+4. 重复2,3，直到right 到达尽头。
+
+right指针相当于在寻找可行解，left指针在优化这个可行解。
+
+需要考虑的问题
+
+1. 当移动 `right` 扩大窗口，即加入字符时，应该更新哪些数据？
+2. 什么条件下，窗口应该暂停扩大，开始移动 `left` 缩小窗口？
+3. 当移动 `left` 缩小窗口，即移出字符时，应该更新哪些数据？
+4. 我们要的结果应该在扩大窗口时还是缩小窗口时进行更新？
+
+**Solution 1**: sliding windows
+
+思路错误：
+
+- 右指针的增加条件 不是找到一个在字符就停止，而是窗口里的值需要包含所有字符
+
+- 左右指针代表的是什么？注意左闭右开，还是左闭右闭
+
+- 如何判断窗口中的数据满足要求？
+
+  用一个hashmap(char, int)存元素出现的次数，初始化map为每个元素在给定字符串中的次数。当map所有 int <= 0, 则说明窗口数据符合要求。
+
+  为什么不是等于0? 有一个窗口出现多个元素
+
+边界情况：字符串中可能包含重复字符，Input:"a" "aa", expected: ""
+
+代码错误：如何遍历map?
+
+```
+        for(Map.Entry<Character, Integer> entry: count.entrySet()){
+            //entry.getValue()
+            //entry.getKey()
+        }
+```
+
+代码优化：可以不用三个int, 两个存放start end index, 一个存length. 可以优化成2个，end index可以用过start+length计算。
+
+Time complexity: $O(S+T)$, space complexity: $ O(S+T) $
+
 #### 415 Add strings
 
 整体思路和 002 Add two nums / 067 Add binary 类似，一位一位相加。
@@ -915,6 +962,12 @@ Time complexity: $ O(max(M,N)) $, space complexity: $ O(max(M,N))$
 char无法赋值为''。char的初始值为"\u0000"，which is a Unicode value denoting ‘null‘ or 0 in decimal. 
 
 不要用char[]来一位一位存string了，直接用==StringBuilder==
+
+#### 567 Permutation in String
+
+**Solution 1**: sort
+
+如果一个字符串包含了另一个字符串的全排列，那么他们含有相同次数个同样的字符。如果对s1, s2进行排序，s2包括s1, 则说明它包括另一个字符的全排列。
 
 ### Divide and Conquer
 
@@ -1704,9 +1757,11 @@ Time complexity: $O(m+n)$, space complexity: $ O(m+n) $
 
 #### 503 Next Greater Element II
 
-Solution 1: stack with double length array
+**Solution 1**: stack with double length array
 
+这道题和496的区别是 数组有环。数组最后一个元素的下一个元素是数组的开头。我们可以将数组的长度翻倍，这样能保证 对于每一个元素，都遍历[i,...last,...i] 这样n遍。
 
+如何将数组长度翻倍？不需要构建新数组，可以循环两遍数组，用取模的方式得到数组下标。
 
 Time complexity: $ O(n) $, space complexity: $ O(n) $
 

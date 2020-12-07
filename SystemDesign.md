@@ -108,3 +108,132 @@ Example: how to design a sticky session
 
 ### Scalability
 
+How does load balancer works?
+
+The end-IP is not published. The process actually works in a way the client (a user hitting the balancer) believes they are communicating with the balancer, while talking to an actual node.
+
+In a very simple explanation, most transactions work like this:
+
+1. A user makes request to the load balancer.
+2. The balancer decides which node is the most suitable (based on the strategy you're using for balancing) and choses (changes) the destination IP.
+3. (This is where the magic happens.) The node receives a request, accepts the connection and responds back to the balancer.
+4. The balancer changes the response IP back to a virtual one, the one of the balancer and forwards the response to the user.
+5. Voilà, the user receives response with the IP of the initial request, even though it was actually processed somewhere else.
+
+Keep in mind the packet rewriting (the change of the IP address in the step 4) is very important. Without it the client, receiving a packet from an IP it does not trust, would simply discard the response.
+
+A **cache** is a simple key-value store and it should reside as a buffering layer between your application and your data storage. Whenever your application has to read data it should at first try to retrieve the data from your cache. Only if it’s not in the cache should it then try to get the data from the main data source.
+
+There are 2 patterns of caching your data.
+
+- Cached Database Queries
+
+  Store database result in cache. The key of cache is the hashed version of query.
+
+  Problems: 
+
+  - It is hard to delete a cached result when you cache a complex query
+  - When one piece of data changes, need to delete all cached queries
+
+- Cached Objects
+
+  Store the data as an object in cache.
+
+ There are 2 ways of **asynchronism**
+
+- Do the time-consuming work in advance and serving the finished work with a low request time
+
+  e.g. turn dynamic content into static content.
+
+- 
+
+### Cases
+
+#### Design a url shortening service
+
+**Step 1: constraints and use cases**
+
+Use cases:
+
+- url shortening: take a url -> return a shorter url
+- redirection: take a short url -> return the original url
+- high availability
+
+Out of scope
+
+- customer url: allow users to pick their shortened url
+- analytics: user look at analytics
+- manual link removal: remove a link that previously shortened
+- UI vs API: a website or just API?
+
+Constraints: usually we think of two questions
+
+- amount of traffic the system should handle
+- amount of data the system store
+
+You should ask how many requests per month/second the system should handle? How many new URLs per month should site handle?
+
+Interviewer -> top 10 url shortening service
+
+15 billion new tweets /month
+
+1.5 billion URLs per month, 
+
+Sites below the top 3: shorten 300M per month
+
+We: 
+
+1. 100 million new URLs per month
+
+2. 1 billion requests per month
+
+3. 10% from shortening and 90% from redirection
+
+4. request per second: 1b/30 days/24 hours = 400+requests/second (40: shorten, 360: redirect)
+
+5. What data need to store? original url, and its shortened hash
+
+   Totals url need to store: 5 years* 12 months * 100 million = 6 billion urls
+
+6. Average length of url: 500 bytes per URL
+
+7. How big the hash need to handle 6B urls? log base62  = 6B, 6 bytes per hash
+
+8. In total: total storage of URL: 500 bytes * 6 B = 3T
+
+   toal storage of hash: 6 byte * 6B = 36GB
+
+9. New data written per second: 40*(500+6 bytes) = 20K
+
+10. Data read per second: 360 * 506 bytes = 180K
+
+**Step 2: Abstract design**
+
+1. Application service layer: serve requests
+
+   1. shortening service
+
+      Generate hash -> check if in db
+
+      if yes, keep generate a new hash until an unused one
+
+      if no, store a new mapping
+
+   2. redirection service
+
+2. Data storage layer: keep track of url mapping
+
+   Acts like a big hash table: store new mappings, retrieves a value given a key
+
+How hash works?
+
+Apply well-unknown hash algorithm, e.g. md5
+
+hashed_url = convert_to_62( md5(original_url + random_salt)) -> take first 6 chars
+
+**Step 3: Understanding bottlenecks**
+
+Bottlenects: traffic is probably not going to very hard, data might be problemlistic
+
+**Step 4: Scaling your abstract design**
+
