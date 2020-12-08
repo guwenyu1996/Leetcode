@@ -313,6 +313,44 @@ Time complexity: $ O(n) $
   
   - 注意循环条件，是$i-1$还是$i$, $ left_{max} = max(left_{max}, height[i-1]), right_{max} = max(right_{max}, height[i+1])$ 
 
+#### 048 Rotate Image
+
+
+
+#### 049 Group Anagrams
+
+**Solution 0**: my solution
+
+如果两个词为异位词，那么它们按照字母表排列后相同。
+
+如何按字母表顺序sort string? String -> char[] -> Arrays.sort() -> new String
+
+使用HashMap<String, int> 存排序后的字符串和数组下标，```List<List<String>>``` 异位词集合。
+
+从头遍历数组，如果map中不存在该字符串的重拍，则说明这是一个新的异位词。
+
+Time complexity: $O(n^2logn)$, space complexity: $ O(logn) $
+
+**Solution 1**: improved solution 0
+
+需要存储数组下标吗？我们只需要保持异位词在同一个集合中。
+
+使用HashMap<String, List>  e.g. "aer" -> ["aer", "rae"]
+
+最后用```new ArrayList<map.values()>``` 创建数组结果
+
+**Solution 2**: categorize by count
+
+如果两个词为异位词，那么它们的字符统计也相同(含有相同的字符相同次)。
+
+我们可以用一个hashmap <String, List> 存异位词的count 以及集合, string是对异位词的count的hash
+
+如何用String表示count? "aab" = "#2#1#0...."
+
+Time complexity: $O(NK)$, N is the length of arr and K is the maximum length of a string
+
+代码：如何将char ->int? int = char - 'a'
+
 #### 054 Spiral Matrix
 
 **Solution 1**: simulation
@@ -889,6 +927,47 @@ Store parenthese to a hashmap to search for a pair easily. If encounter a openin
 ==使用```stack.pop```方法之前需要先检查stack是否为空，不然会抛出异常。==
 
 Time complexity: $O(n) $, space complexity: $ O(n) $
+
+#### 022 Generate Parentheses
+
+**Solution 1**: brute force
+
+生成所有序列，并检查每一个生成字符串是否有效。
+
+如何生成所有长度为2n的序列？使用递归，长度为n的序列就是长度为n-1的序列后加(或者)
+
+如何检查字符串是否有效？1)一个合法的字符串，从左到右，右括号的数量不能大于左括号，2)并且最终左括号的数量等于右括号。
+
+思路错误：判断字符串合法需要满足两个条件，如果只满足1，则最终结果左右数量不平均。
+
+代码优化：在递归的时候，需要每一轮都把结果存到```List<String>```里吗？不需要，用一个char[]类型表示最终字符串，一位一位填即可。
+
+Time complexity: $O(2^{2n} n)$, space complexity: $ O(n) $
+
+**Solution 2**: backtracking
+
+优化solution1, 我们不需要生成所有排列，而是对每一个合法的长度为2n-2的序列，增加一个括号。
+
+需要维持两个遍历，统计当前左 右括号的数量。
+
+递归条件：
+
+- 左括号 < n, 可以递归增加左括号
+- 右括号<左括号，可以增加右括号
+
+**Solution 3**: dynamic programming
+
+定义状态：dp[i]代表 用i个()组成的全部解
+
+初始状态： dp[0] = "", dp[1]="()"
+
+状态转移方程：已经dp[0], dp[1], ... dp[n-1], 求dp[n]
+
+把每一个解都看成[a]b, a是dp[p], b代表dp[q], p+q = n-1
+
+dp[n] = (dp[p]) dp[q]
+
+结果：dp[n]
 
 #### 067 Add binary
 
@@ -1797,3 +1876,45 @@ Time complexity: $O(n^2)$, space complexity: $ O(n) $
 - 栈里不用同时存储下标和温度，只需要存储下标，通过下标可以找到当天温度。
 
 Time complexity: $O(n)$ (一共有n个元素，最多pop n次), space complexity: $ O(n) $
+
+### Math
+
+#### 069 Sqrt
+
+**Solution 1**: binary search
+
+设置left = 0, right = x. 每次比较middle和x的大小。
+
+如何判断返回left还是right? 循环条件是left <= right, 跳出条件是right<left。这道题求int floor, 需要返回right. 如果求floor ceiling, 需要返回left. 
+
+代码错误：
+
+- Java 里``` int i = 3/2```, i = 1
+
+- 如何处理Java里溢出情况？ ```long num = i * i(int)``` 这样可以处理i为int_max的情况吗？
+
+  ==Java中的类型转换==分为两种：
+
+  - 自动(隐式)类型转换：表数范围小的类型可以自动转为为表数范围大的类型
+    - byte->short->int->long->float->double
+    - char->int->long->float->double
+    - 写法：```int a = 6; long b = a;```
+  - 强制(显式)类型转换：表数范围大的类型需要强制转化为表述小的类型，也叫缩小转换
+    - 写法：```(targetType)value```
+    - 强制转换可能会出现数据丢失, ```double a = 3.14; int b = (int)a // 3```
+
+  表达式类型的自动提升:
+
+  当一个算数表达式包含多个基本类型的值时，整个算术表达式的数据类型将发生自动提升, 自动提升到表达式中最高等级操作数同样的类型
+
+  ```double a = 3/2; // 1.0``` , int类型操作数与int类型操作数一起操作，返回值还是整数。需要对一个操作数进行类型转换
+
+思路错误：
+
+- binary search的基本框架, 假设循环条件为left <=right, 不需要在while循环里处理left == right的情况。你可以在循环外处理。
+
+边界错误：
+
+- Input: 2147395599，计算平方时需要使用long，而不是int。
+
+Time complexity: $ O(logn) $, space complexity: $ O(1) $
