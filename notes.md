@@ -407,6 +407,114 @@ Time complexity: $O(n)$, space complexity: $ O(1) $
 
 Time complexity: $ O(nlogn) $, space complexity: $ O(logn) $ sort itself takes $O(logn)$ space.
 
+#### 062 Unique Paths
+
+**Solution 1**: backtracking, time limit reaches
+
+使用递归，如果当前位置不在最底层，可以往下一层递归。如果当前位置不在最右列，可以往右侧递归。
+
+**Solution 2**: math
+
+排列公式: $P(n, k) = \frac{k!}{n!}$
+
+组合公式：$C(n, k) = \frac{n!}{(n-k)!k!}$
+
+边界错误：使用int计算结果会导致溢出，需要用long类型存储
+
+**Solution 3**: dynamic programming
+
+定义状态：dp[i] [j]表示走到(i, j)一共有几种不同路线
+
+初始状态： dp[0] [j] , dp[i] [0]都初始为1
+
+状态转移方程：dp[i] [j] = dp[i-1] [j] + dp[i] [j-1], 走到该格子的所有路线 = 走到该格子上方的所有路线 + 走到该格子左边的所有路线
+
+结果：return dp[m-1] [n-1]，最后一个格子
+
+Time complexity: $O(m*n)$, space complexity: $ O(m*n) $
+
+**Solution 4**: simplified dynamic programming
+
+二维数组dp 可以简化为一维数组dp[row]
+
+状态转移方程：dp[i] = dp[i] + dp[i-1]
+
+Time complexity: $O(m*n)$, space complexity: $ O(n) $
+
+#### 063: Unique Path II
+
+Solution 1: dynamic programming
+
+定义状态：dp[i] [j]
+
+初始状态：需要初始化dp[0] [i], 当且仅当该格子没有障碍，并且左边格子也没有障碍时，dp[0] [1] = 1
+
+状态转移方程：当该格子没有障碍时，dp[i] [j] = dp[i-1] [j] + dp[i] [j-1]，否则为0
+
+结果：return dp[m-1] [n-1]
+
+思路错误：初始化dp[0] [i]时，不是该格子没有障碍就为1。如果左面有障碍，是没有办法走到该格子的。
+
+Time complexity: $ O(m*n) $, space complexity:$O(m*n) $
+
+#### 075 Sort colors
+
+**My solution**: quick sort
+
+这道题需要用quick sort解决带重复数字的排序问题。
+
+标兵为数组的第一个数，使用左右指针遍历数组，左右指针初始为数组的开头和末尾下标。右指针先动（非常重要），寻找第一个>标兵的数。左指针后动，寻找第一个<标兵的数，之后交换左右指针。
+
+一直重复这个过程，直到左右指针相遇，交换数组的左下标和pivot (归位pivot)。
+
+思路错误：
+
+- Quick sort 框架里，为什么==需要右边的指针先走==？
+
+  需要保证左右指针相遇时，值小于pivot
+
+  右指针的移动条件是>pivot, 它碰到<pivot的值截止。
+
+  左指针的移动条件是<pivot, 它碰到>pivot的值停止。
+
+  如果左指针先动，移动后遇到右指针，此时的值>pivot (左指针的跳出条件)。
+
+  如果右指针先动，移动后遇到左指针，此时的值<pivot (右指针的跳出条件)。
+
+- 左右指针的初始值？
+
+  左指针初始为数组下标，即标兵的下标。如果标兵+1，可能溢出。
+
+- 循环的截止条件？
+
+  左右指针不相遇，相遇后跳出循环，swap 标兵和任意指针。
+
+- 标兵的移动条件？
+
+  对于无重复数字的数组，右指针寻找<pivot的值，左指针寻找>pivot的值。
+
+  如果是有重复数字的数组，右指针寻找<=pivot的值,左指针寻找>=pivot的值。
+
+Time complexity: $O(nlogn)$, space complexity: $ O(1)$
+
+**Solution 1**: count -two pass
+
+先遍历一遍数组，用一个数组存0,1,2的个数分别有多少个。
+
+第二遍遍历数组时，按照个数修改原数组。
+
+Time complexity: $O(2n)$, space complexity: $O(3)$
+
+**Solution 2**: one pass
+
+我们希望将数组分为三部分，0 | 1 | 2
+
+使用three pointers, 左指针初始为数组头，代表0部分的末尾，右指针初始为数组结尾，代表2部分的开始。
+
+使用第三个指针curr遍历数组,。遇到0，将curr与left交换，移动curr和left指针；遇到2，将curr与right交换，并移动right指针。知道curr > right。
+
+Time complexity: $ O(n) $, space complexity: $ O(1) $
+
 #### 078 Subsets
 
 **Solution 1**: dynamic programming
@@ -488,8 +596,6 @@ Time complexity: $O(n)$, space complexity: $ O(1) $
 画出决策树，决策树第i层代表解的第i个数。
 
 Number of exploration $ P(9, K) = \frac{9!}{(9-K)!} $, each exploration takes constant time. So time complexity: $O(\frac{9!}{(9-K)!})$, space complexity: $ O(K) $
-
-#### 738 monotone increasing digits
 
 #### 915 Partition array into disjoint intervals
 
@@ -1084,9 +1190,9 @@ Divide:  将数组划分成以x为标志，x以左的数小于x, x右边的数�
 
 ![1605541398280](C:/Users/wenyu/AppData/Roaming/Typora/typora-user-images/1605541398280.png)
 
-​			实现：数组的第一个元素设为pivot, 使用两个指针一左一右，右边的指针寻找比x大的元素，左边的指针寻找比x小的元素，交换两指针。当左指针等于右指针，遍历结束，交换pivot和指针。
+​			实现：数组的第一个元素设为pivot, 使用两个指针一左一右，左右指针的初始值为数组的开始和结束。右边的指针寻找比x大的元素，左边的指针寻找比x小的元素，交换两指针。当左指针等于右指针，遍历结束，交换pivot和指针。
 
-==需要右边的哨兵先走，这样最后相遇的元素一定小于pivot.== 
+==需要右边的哨兵先走，这样最后相遇的元素一定小于pivot.==  为什么？右边的指针先向左移动，左右相交，这样相遇的值一定小于哨兵
 
 Conquer: recursively solve two subarrays
 
@@ -1210,6 +1316,36 @@ Time complexity: $ O(n^3) $, space complexity: $ O(n) $
 ==关于遍历字符串时的截止条件，下标<= 或者 <==
 
 注意string.substring(i,j) 截取了string[i, j) 部分，即前开半闭区间。如果遍历区间的开始位置i, 需要满足i < s.length()。如果遍历区间的结束位置j, 则需要满足j <= s.length()
+
+#### 238 Product of Array Except Self
+
+**Solution 1**: dynamic programming
+
+数组上的每个数，都可以看做这个数左边的乘积 * 右边的乘积
+
+![img](https://leetcode.com/problems/product-of-array-except-self/Figures/238/diag-1.png)
+
+定义状态：left[i] 表示在index=i 左边数的乘积，right[i] 表示在index=i右边数的乘积
+
+初始状态： left[0] = 1, right[len-1] = 1
+
+状态转移方程：left[i] = left[i-1] * nums[i-1], right[i] = right[i+1] * right[i]
+
+结果：ans[i] = left[i] * right[i]
+
+一共遍历数组3遍，前两遍分别从左和右计算出left[i] 和right[i], 最后一遍把left*right得到结果
+
+Time complexity: $O(n)$, space complexity: $O(n) $
+
+**Solution 2**: simplified dynamic programming
+
+我们需要维持两个int[]数组吗？可以简化为$O(1)$
+
+为了得到左下三角的乘积，我们可以直接修改结果数组 ans[i] = nums[i-1] * ans[i-1]
+
+为了得到右下三角的乘积，我们可以使用一个int变量。不断更新temp来得到ans[i] = ans[i] * temp
+
+Time complexity: $O(n)$, space complexity: $ O(1) $
 
 #### 322 Coin change
 
@@ -1636,6 +1772,10 @@ Steps:
    2. 区别key/value
 
 Time complexity: $O(1)$, space complexity: $ O(n) $
+
+#### 155 Min Stack
+
+
 
 ### Greedy
 
