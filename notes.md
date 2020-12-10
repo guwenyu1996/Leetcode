@@ -597,6 +597,10 @@ Time complexity: $O(n)$, space complexity: $ O(1) $
 
 Number of exploration $ P(9, K) = \frac{9!}{(9-K)!} $, each exploration takes constant time. So time complexity: $O(\frac{9!}{(9-K)!})$, space complexity: $ O(K) $
 
+#### 239 Sliding window Maximum
+
+
+
 #### 915 Partition array into disjoint intervals
 
 **My solution**: dynamic programming
@@ -620,6 +624,18 @@ Time complexity: $ O(n) $, space complexity: $ O(n) $
 **Solution 1**: simply two arrays by using one array
 
 可以只保留rightMin. 在最后一遍从左到右找到满足的i 时，用一个变量存储left_max.
+
+#### 1438 Longest Contious Subarray With Absolute Diff Less Than or Equal to limit
+
+​                     8,2,4,7 limit = 4
+
+​                    ^
+
+​                    ^
+
+max          
+
+min           
 
 ### Tree
 
@@ -871,6 +887,32 @@ Time complexity: $O(n) $ as visit every node exactly once, space complexity: $O(
 The idea is to swap the left and right child of all nodes in the tree. BFS遍历tree, use a queue to store nodes whose children not swap yet. Pop up an element from queue and swap its children. When queue is empty, invertion is done.
 
 这道题不需要delimiter. 每层的结点都是swap children, task没有区别。
+
+#### 236 Lowest Common Ancestor of a Binary Tree
+
+**Solution 1**: recursion
+
+两个节点的最近公共祖先是什么呢？这里有两种可能：
+
+- 左子树包括一个结点，右子树也包括一个结点
+- 如果该结点就是其中一个结点，它的左右子树其中之一包括另一个结点
+
+设计一个递归函数，函数的返回值boolean表示该结点及其孩子是否包括任一结点。如果满足上述之一情况，则找到答案。
+
+感受：
+
+- 递归函数的返回值不一定是所求答案，可以设置一个类变量存储答案，使用其他返回值方便递归。
+- boolean -> int，需要判断true/false然后赋值，不能强制类型转换
+
+Time complexity: $O(n)$, space complexity: $O(n)$
+
+**Solution 2**: iterative with parent node
+
+BFS遍历二叉树，用map存储结点和它的父节点。直到map里同时包含两个结点，说明两个结点已经被遍历到。
+
+取其中一个结点，用set存储它所有的父节点。用另一个结点向根节点逆推，第一个在set里的结点就是公共父节点。
+
+Time complexity: $O(n)$, space complexity: $O(n)$
 
 ### String
 
@@ -1300,6 +1342,8 @@ backtracking的思想是DFS思想，可以用BFS实现这道题。
 Time complexity: $ O(n^3) $, space complexity: $  O(n) $
 
 **Solution 4**: dynamic programming
+
+这个想法特殊的是第一重循环dp[i] 从0到数组结尾，第二重循环 找前i个 是不是能分成 0 ..j..i, j..i在字典里
 
 string[0, i] 可以被拆分成两部分s1和s2. s1 = string[0, j] 以及 s2 =[j, i]。 如果s1已知可以被拆分，并且s2在字典里，那么string[o, i]可以被表达
 
@@ -1775,6 +1819,39 @@ Time complexity: $O(1)$, space complexity: $ O(n) $
 
 #### 155 Min Stack
 
+要求push, pop, top, getMin都在$ O(1) $ 时间完成。
+
+**My solution**: stack + linkedlist $O(n) $
+
+使用stack维护支持top, pop操作，用linkedlist实现对数字的排序。
+
+但是插入linkedlist的时间复杂度是$O(n) $
+
+**Solution 1**: stack of minimum pairs
+
+使用一个stack<int[]> ，存储当前数字和当前的最小值。栈里的最小值，要不是栈顶的最小值，要不是新加入的元素。
+
+代码错误：Java 初始数组```new int[2]{x, x}``` 语法错误。
+
+- 静态初始化，显示指定每个元素的初始值```int[] intArr = new int[]{1,2,3,4,5,9};``` 
+- 动态初始化，指定数组长度，由系统初始化默认值```int[] arr = new int[4];```
+
+**Solution 2**: two stacks
+
+有些时候最小值是重复的，我们可以优化这部分吗？
+
+使用两个stack < int>，一个用来更新最小值，一个去更新当前数值。对于push操作，如果新加入数字<=最小值栈顶，则更新最小值栈。否则只加入数字。
+
+![Diagram of using 2 stacks.](https://leetcode.com/problems/min-stack/Figures/155/two_stacks.png)
+
+边界条件：新加入=最小栈栈顶， 也需要更新一遍最小栈栈顶。也就是说即便是相同的最小值需要重复存储，不然无法判断是哪个最小值弹出。
+
+**Solution 3**: improved two stacks
+
+Sol 2需要重复存储相同的最小值，我们可以优化这个部分吗？
+
+使用一个stack< int> 更新当前数值，一个stack<int[]>更新< 最小值，它重复的次数>
+
 
 
 ### Greedy
@@ -2016,6 +2093,40 @@ Time complexity: $O(n^2)$, space complexity: $ O(n) $
 - 栈里不用同时存储下标和温度，只需要存储下标，通过下标可以找到当天温度。
 
 Time complexity: $O(n)$ (一共有n个元素，最多pop n次), space complexity: $ O(n) $
+
+### Sliding window
+
+#### 239 Sliding Window Maximum
+
+**Solution 1**: deque + monotonous stack 单调栈
+
+使用双头队列deque, 队列头部存最大值，队列尾部存最小值。
+
+当窗口右移，我们将新数与队尾比较，如果队尾<新数，移除队尾 加入新数。
+
+如果deque左端元素不在窗口内，移除deque头部。
+
+为什么使用deque? deque是双头队列，允许在队列头尾进行查找删除。题目要求deque中的元素是窗口元素的子集。如果窗口右移，左边的元素移除窗口，我们需要在deque中也把它删除。
+
+Time complexity: $ O(n) $
+
+**Solution 2**: dynamic programming
+
+![split](https://leetcode.com/problems/sliding-window-maximum/Figures/239/solution.png)
+
+将数组分割成k个一组的n组，最后一组元素可能不满k个。
+
+定义状态：left[i] 表示从当前元素所在block的左端到i的最大值。
+
+right[i]表示从当前元素所在block的右端到i的最大值。
+
+初始状态： 
+
+状态转移方程：left[i] = Max(left[i-1], nums[i]) (非blocking第一个元素)
+
+right[i] = Max(right[i+1], nums[i]) (非blocking最后一个元素)
+
+结果：max(right[i], left[i + k - 1])
 
 ### Math
 

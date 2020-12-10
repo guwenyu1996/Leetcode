@@ -227,7 +227,7 @@ We:
 
 How hash works?
 
-Apply well-unknown hash algorithm, e.g. md5
+Apply well-unknown hash algorithm, e.g. md5(一种哈希算法，输入一串字符串，输出为128bit string)
 
 hashed_url = convert_to_62( md5(original_url + random_salt)) -> take first 6 chars
 
@@ -237,3 +237,31 @@ Bottlenects: traffic is probably not going to very hard, data might be problemli
 
 **Step 4: Scaling your abstract design**
 
+#### Design a web crawler
+
+**Step 1**: use cases and constraints
+
+Use cases:
+
+- urls -> get title and snippets
+- urls -> reverse index of words
+- search term -> relevant pages
+- high availability
+
+Assumptions
+
+- 1 billions links to crawl
+- page refresh about one per week -> 4 billions links to crawl per month
+- Average stored size per web page: 500 KB
+- 100 billion searches per month
+
+Calculation:
+
+- traffic
+  - 1600 write requests / sec = 4 billion per month
+  - 40,000 search requests / sec = 100 billion search per month
+- data (KB -> MB -> GB -> TB -> PB)
+  - 2PB = 1 billion * 500 kb per month
+  - 72 PB in 3 years
+
+**Step 2: high level design**
