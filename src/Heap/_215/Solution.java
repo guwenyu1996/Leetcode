@@ -1,4 +1,4 @@
-package Divide_Conquer._215;
+package Heap._215;
 
 import java.util.PriorityQueue;
 

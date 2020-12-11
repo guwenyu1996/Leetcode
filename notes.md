@@ -541,6 +541,16 @@ Backtracking is an algorithm for finding all solutions by exploring all potentia
 
 Time complexity: $ O(N*2^N)$, space complexity: $ O(N*2^N)$
 
+#### 079 Word Search
+
+**Solution**: backtracking
+
+用backtracking方向，向格子的四个方向查找。
+
+为了防止重复遍历相同的位置，需要维护一个与输入 等大的boolean数组。
+
+简化写法：在递归函数开始判断位置是否合法，而不是在最后四个方向查找时再一个个判断。
+
 #### 088 Merge Sorted Array
 
 **My solution**: 
@@ -1190,13 +1200,52 @@ char无法赋值为''。char的初始值为"\u0000"，which is a Unicode value d
 
 不要用char[]来一位一位存string了，直接用==StringBuilder==
 
+#### 459 Repeated Substring Pattern
+
+**My solution**: 
+
+使用一个不断右开的窗口，用窗口匹配窗口右边的字符串。
+
+如果匹配失败，则说明重复字符串寻找失败，把窗口+1。重新匹配右边的字符串。
+
+如果全部字符串匹配成功，并且字符串最后一位匹配窗口最后一位，说明找到重复字符串。
+
+思路错误：
+
+- 遍历字符串的指针，初始值为窗口右边界+1，查找失败时需要回归，也为窗口右边界+1
+- 查找成功的条件为，重复字符串一直匹配成功，直到最后一位。
+
+边界情况： input string = "a"，长度为1，直接返回false
+
+Time complexity: > $ O(n) $ 
+
+**Solution 1**: Concatenation
+
+将输入字符串加倍，使用双倍字符串
+
+```PatternPattern``` ->  ```PatternPatternPatternPattern```
+
+```Pattern1Pattern2``` ->  ```Pattern1Pattern2Pattern1Pattern2```
+
+去掉开头和结尾的字符：
+
+```PatternPattern``` ->  ```*atternPatternPatternPatter*```
+
+```Pattern1Pattern2``` ->  ```*attern1Pattern2Pattern1Pattern*```
+
+如果新字符串还含有输入字符串，说明是重复字符串。
+
+Time complexity: $O(n^2)$, space complexity: $ O(n) $
+
+
+
 #### 567 Permutation in String
 
 **Solution 1**: sort
 
 如果一个字符串包含了另一个字符串的全排列，那么他们含有相同次数个同样的字符。如果对s1, s2进行排序，s2包括s1, 则说明它包括另一个字符的全排列。
 
-### Divide and Conquer
+### Heap
 
 #### 215 Kth largest element in the array
 
