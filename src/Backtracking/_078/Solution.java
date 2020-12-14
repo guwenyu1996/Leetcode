@@ -1,4 +1,4 @@
-package Array._078;
+package Backtracking._078;
 
 import java.util.ArrayList;
 import java.util.List;

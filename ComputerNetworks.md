@@ -178,9 +178,9 @@ HTTP使用TCP传输服务，连接流程是：
 - 客户端与服务器交换信息
 - 关闭TCP连接
 
-HTTP是无状态协议，即服务器不维护客户端过去发送请求的消息。
+HTTP是**无状态**协议，即服务器不维护客户端过去发送请求的消息。
 
-HTTP连接的两种类型：
+根据每个链接传输对象的数量，HTTP连接分为两种类型：
 
 - 非持久性连接：每个tcp连接最多传输一个对象，早期http协议是这种类型
   - e.g. 假定用户在浏览器输入url www.someschool.edu/home.index (包括10个jpeg)
@@ -196,7 +196,7 @@ HTTP连接的两种类型：
   - 无流水的持久性连接：客户端收到前一个响应后才发送新的请求
   - 带有流水机制的持久性连接：客户端只要遇到一个引用对象就发出请求，http1.1的默认选项
 
-HTTP的消息类型：
+HTTP的消息格式：
 
 - 请求消息 request
 
@@ -209,9 +209,44 @@ HTTP的消息类型：
 
   第一行是请求行，包括请求类型(Get/post) 及请求资源(URL), HTTP版本
 
-  第二行之后是头部信息
+  第二行之后是头部信息。服务器根据不同浏览器，不同语言会采取不同操作。
 
 - 响应消息 response
+
+  ```
+  HTTP/1.1 200 OK
+  Connection: close
+  Date: Thu, 06 Aug 1998 12:00:15 GMT
+  Server: Apache/1.3
+  Content-Length: 6981
+  Coneect-type: text/html
+  data data
+  ```
+
+  - HTTP响应的状态代码
+
+    200 -> OK
+
+    301 -> Move permanently
+
+    400 -> Bad request
+
+    404 -> Not found
+
+#### Cookie
+
+由于http协议是无状态的，不保留客户发送请求的历史记录。但有些网站(例如电商)需要保留客户的会话状态及在线信息，提出了cookie技术。它是为了辨别用户身份，进行session追踪，从而存储在客户端本地的数据。
+
+Cookie的组件
+
+- http响应消息的cookie头部行
+- http请求消息的cookie头部行
+- 保存着客户端上的cookie文件，由浏览器管理
+- 服务器端的数据库
+
+Cookie使用流程：
+
+![1607882639417](C:/Users/wenyu/AppData/Roaming/Typora/typora-user-images/1607882639417.png)
 
 ### 传输层
 

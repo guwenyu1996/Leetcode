@@ -216,35 +216,6 @@ Corner case:
 
 - [1,3,5,6] 2, expected: 1, output: 0
 
-#### 039 combination sum
-
-Solution: backtracking
-
-画出这道题的树形图
-
-思路错误：
-
-- 为了防止加入重复组合([2,2,3], [3, 2, 2])，加入的数字必须>=之前加入的数。比如加入3， 就不能再加入2了。需要用一个变量存开始可用的数字下标。
-- when to throw array impossible numbers?  对这个子树的所有解都尝试过之后，从代码的角度来说就是，当递归语句执行结束之后，需要清除刚刚加入的元素。否则最后结果会包含所有尝试过的路径。
-- 找到一组解，需要clear掉结果吗？不需要。因为没有从head开始遍历solution tree, 递归栈里并不为空。不能clear掉结果。
-- java 返回值为void的函数，可以直接```return; ```
-
-代码错误：
-
-- 因为List存储的是地址，不能直接把List<>加入result；否则后续如果修改list, result里面的数组也会被修改。需要加入new (list).
-
-Time complexity: $ O(N^{T/M + 1}) $, where N be the number of candidates, T be the target value, M is the minimal value among candidates, space complexity: $ O(T/M) $, the depth of tree
-
-#### 040 Combination Sum II
-
-和39的区别：candidates里每个数只能用一遍，并且结果不能重复
-
-思路错误：
-
-- candidates里包括重复数字，最终结果重复
-
-  如何避免这个情况？假如有重复数字，需要跳过第二次对该数字的遍历。第一次照常执行。
-
 #### 041 First missing Positive
 
 **Solution**:
@@ -515,32 +486,6 @@ Time complexity: $O(2n)$, space complexity: $O(3)$
 
 Time complexity: $ O(n) $, space complexity: $ O(1) $
 
-#### 078 Subsets
-
-**Solution 1**: dynamic programming
-
-nums [1, 2, 3]
-
-| nums      | subsets                                             |
-| --------- | --------------------------------------------------- |
-| []        | []                                                  |
-|           | [], [] (复制一遍当前结果)                           |
-| [1]       | [], [1]                                             |
-|           | [], [1],  **\|**  [], [1]                           |
-| [1,2]     | [], [1],   [2], [1,2]                               |
-|           | [], [1],   [2], [1,2]  **\|** [], [1],   [2], [1,2] |
-| [1, 2, 3] | [], [1],   [2], [1,2], [3], [1,3],   [2,3], [1,2,3] |
-
-Start with empty subsets. At each step, take one element from nums array, generate new subsets from existing subsets. Copy current subsets and add new element to each element of copy subsets.
-
-Time complexity: $ O(N*2^N)$, space complexity: $O(N*2^N)$
-
-**Solution 2**: backtracking
-
-Backtracking is an algorithm for finding all solutions by exploring all potential candidates. If the solution candidate turns to be not a solution (or at least not the last one), backtracking algorithm discards it by making some changes on the previous step.
-
-Time complexity: $ O(N*2^N)$, space complexity: $ O(N*2^N)$
-
 #### 079 Word Search
 
 **Solution**: backtracking
@@ -596,20 +541,6 @@ Time complexity: $O(n)$, space complexity: $ O(1) $
 Instead of looking for peak and valley, we can add consecutive profit. e.g. [1, 2, 3], valley = 1, peak = 3. But we can calculate as 2-1 + 3-2 = 2. If the second number is larger than the first one, we add the difference to sum.
 
 Time complexity: $O(n)$, space complexity: $ O(1) $
-
-#### 216 Combination sum III
-
-参考 039 combination sum
-
-**Solution 1**: backtracking
-
-画出决策树，决策树第i层代表解的第i个数。
-
-Number of exploration $ P(9, K) = \frac{9!}{(9-K)!} $, each exploration takes constant time. So time complexity: $O(\frac{9!}{(9-K)!})$, space complexity: $ O(K) $
-
-#### 239 Sliding window Maximum
-
-
 
 #### 915 Partition array into disjoint intervals
 
@@ -1289,6 +1220,16 @@ Conquer: recursively solve two subarrays
 
 本题寻找第k大元素，如果pivot position < k，没有必要对左边元素排序；如果pivot position > k, 没有必要对右边元素进行遍历。
 
+#### 347 Top K Frequent Elements
+
+**Solution 1**: heap
+
+遍历第一遍数组，用一个map<int, int>存储数字及它的频率。
+
+遍历第二遍数组，建立一个大小为k的堆。
+
+Time complexity: $ O(Nlogk) $, space complexity: $ O(N+K) $
+
 ### Dynamic Programming
 
 动态规划格式：
@@ -1321,7 +1262,23 @@ f(i) = max(nums[i], f(i-1) + nums[i]) , 注意不是max(f(i-1), f(i-1)+nums[i])�
 
 result = max(f(i))
 
-#### 70 Climing stairs
+#### 064 Minimum Path Sum
+
+Solution 1: dynamic programming 2D
+
+定义状态：dp[i] [j] 表示从(0, 0) 到(i, j)的最少path和
+
+初始状态： base state情况
+
+状态转移方程：如何用上一个状态得到下一个状态
+
+结果：dp[row-1] [col-1]
+
+Time complexity: $O(mn)$, space complexity: $ O(mn) $
+
+Solution 2: dynamic programming 1D
+
+#### 070 Climing stairs
 
 **Solution 1**: dynamic programming
 
@@ -2218,3 +2175,76 @@ right[i] = Max(right[i+1], nums[i]) (非blocking最后一个元素)
 - Input: 2147395599，计算平方时需要使用long，而不是int。
 
 Time complexity: $ O(logn) $, space complexity: $ O(1) $
+
+### Backtracking
+
+#### 039 combination sum
+
+Solution: backtracking
+
+画出这道题的树形图
+
+思路错误：
+
+- 为了防止加入重复组合([2,2,3], [3, 2, 2])，加入的数字必须>=之前加入的数。比如加入3， 就不能再加入2了。需要用一个变量存开始可用的数字下标。
+- when to throw array impossible numbers?  对这个子树的所有解都尝试过之后，从代码的角度来说就是，当递归语句执行结束之后，需要清除刚刚加入的元素。否则最后结果会包含所有尝试过的路径。
+- 找到一组解，需要clear掉结果吗？不需要。因为没有从head开始遍历solution tree, 递归栈里并不为空。不能clear掉结果。
+- java 返回值为void的函数，可以直接```return; ```
+
+代码错误：
+
+- 因为List存储的是地址，不能直接把List<>加入result；否则后续如果修改list, result里面的数组也会被修改。需要加入new (list).
+
+Time complexity: $ O(N^{T/M + 1}) $, where N be the number of candidates, T be the target value, M is the minimal value among candidates, space complexity: $ O(T/M) $, the depth of tree
+
+#### 040 Combination Sum II
+
+和39的区别：candidates里每个数只能用一遍，并且结果不能重复
+
+思路错误：
+
+- candidates里包括重复数字，最终结果重复
+
+  如何避免这个情况？假如有重复数字，需要跳过第二次对该数字的遍历。第一次照常执行。
+
+#### 046 Permutations
+
+使用list存当前的permutation, set存已经使用过的数字。已经使用过的数字不能再次使用。
+
+#### 078 Subsets
+
+**Solution 1**: dynamic programming
+
+nums [1, 2, 3]
+
+| nums      | subsets                                             |
+| --------- | --------------------------------------------------- |
+| []        | []                                                  |
+|           | [], [] (复制一遍当前结果)                           |
+| [1]       | [], [1]                                             |
+|           | [], [1],  **\|**  [], [1]                           |
+| [1,2]     | [], [1],   [2], [1,2]                               |
+|           | [], [1],   [2], [1,2]  **\|** [], [1],   [2], [1,2] |
+| [1, 2, 3] | [], [1],   [2], [1,2], [3], [1,3],   [2,3], [1,2,3] |
+
+Start with empty subsets. At each step, take one element from nums array, generate new subsets from existing subsets. Copy current subsets and add new element to each element of copy subsets.
+
+Time complexity: $ O(N*2^N)$, space complexity: $O(N*2^N)$
+
+**Solution 2**: backtracking
+
+Backtracking is an algorithm for finding all solutions by exploring all potential candidates. If the solution candidate turns to be not a solution (or at least not the last one), backtracking algorithm discards it by making some changes on the previous step.
+
+Time complexity: $ O(N*2^N)$, space complexity: $ O(N*2^N)$
+
+#### 216 Combination sum III
+
+参考 039 combination sum
+
+**Solution 1**: backtracking
+
+画出决策树，决策树第i层代表解的第i个数。
+
+Number of exploration $ P(9, K) = \frac{9!}{(9-K)!} $, each exploration takes constant time. So time complexity: $O(\frac{9!}{(9-K)!})$, space complexity: $ O(K) $
+
+#### 

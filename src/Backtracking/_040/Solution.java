@@ -1,4 +1,4 @@
-package Array._040;
+package Backtracking._040;
 
 import java.util.ArrayList;
 import java.util.Arrays;
