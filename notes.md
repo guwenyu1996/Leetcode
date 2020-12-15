@@ -1268,9 +1268,9 @@ Solution 1: dynamic programming 2D
 
 定义状态：dp[i] [j] 表示从(0, 0) 到(i, j)的最少path和
 
-初始状态： base state情况
+初始状态： dp[0] [i], dp[i] [0]都是当前行相加
 
-状态转移方程：如何用上一个状态得到下一个状态
+状态转移方程：dp[i, j] = arr[i,j] + min(dp[i-1, j], dp[i, j-1])
 
 结果：dp[row-1] [col-1]
 
@@ -1366,6 +1366,46 @@ Time complexity: $ O(n^3) $, space complexity: $ O(n) $
 ==关于遍历字符串时的截止条件，下标<= 或者 <==
 
 注意string.substring(i,j) 截取了string[i, j) 部分，即前开半闭区间。如果遍历区间的开始位置i, 需要满足i < s.length()。如果遍历区间的结束位置j, 则需要满足j <= s.length()
+
+#### 152 Maximum Product Subarray
+
+**Solution 1**: brute force
+
+遍历每一个子数组，算出子数组的乘积。
+
+Time complexity: $ O(n^2) $, space complexity: $O(1) $
+
+**Solution 2**: dynamic programming
+
+参考053 maximum subarray
+
+如果当前数是正数，正*正=正，max[i] = max[i-1] * nums[i]
+
+如果当前数是负数，负*负=正，max[i] = min[i-1] * nums[i]
+
+定义状态：max[i] 表示包括第i个数的最大子数组之积, min[i]表示包括第i个数的最小子数组之积
+
+初始状态：max[0] = nums[0], min[0] = nums[0]
+
+状态转移：max[i] = max{nums[i], max[i-1] * nums[i], min[i-1] * nums[i]} (不论当前值为正负数)
+
+   min[i] = min{nums[i], max[i-1] * nums[i], min[i-1] * nums[i]}
+
+结果：max {max[i]}
+
+Time complexity: $ O(n) $, space complexity: $O(n)$
+
+**Solution 3**: dynamic programming simplified
+
+dp没有用到完整数组，而是数组前一个值
+
+我们可以简化两个数组为两个int值
+
+思路错误：
+
+- 每一轮dp都会修改max, min的值。假如直接修改max, 那么min会用最新的max, 而不是前一个数的max，返回结果错误。
+
+Time complexity: $O(n)$, space complexity: $O(1) $
 
 #### 238 Product of Array Except Self
 
