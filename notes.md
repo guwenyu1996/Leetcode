@@ -268,8 +268,6 @@ Time complexity: $ O(n) $
 
 **Solution 4**: 2 pointers
 
-
-
 思路错误：
 
 - Two pointers
@@ -286,7 +284,27 @@ Time complexity: $ O(n) $
 
 #### 048 Rotate Image
 
+**Solution 1**: transpose and then reverse
 
+先转置矩阵（按照对角线反转），再左右翻转矩阵。
+
+转置矩阵，即交换(i,j) 和 (j, i)。需要转置的范围是矩阵的下左三角和右上三角，也就是当row < col. 
+
+左右翻转矩阵，即交换(i, j) 和 (i, len - j - 1)。需要翻转的范围是矩阵的左半和右半，mid = len / 2; 这里不需要(len + 1)/2。假如len = 5, mid = (5+1)/2 = 3, 实际mid是2.
+
+Time complexity: $ O(n^2) $, space complexity: $ O(n) $
+
+**Solution 2**: rotate four rectangles
+
+![compute](https://leetcode.com/problems/rotate-image/Figures/48/48_rectangles.png)
+
+把矩阵当做左上(p1,p1) 右下(p2,p2)为顶点的正方形嵌套。旋转矩形，就是按层次旋转矩形的圈。每次旋转四个点，直到该层旋转完。旋转下一层。
+
+![坐标变换.png](https://pic.leetcode-cn.com/58c76a0a3b1fed08f9546aa0993c99f3d1fff08a63987c960a5ccf23f7c71678-image.png)
+
+当p1 = p2时，循环截止。
+
+代码错误：旋转点的坐标，前一个的行=后一个的列，后一个的行= len - 前一个的列。这道题的难点是表达旋转点的坐标。
 
 #### 049 Group Anagrams
 
@@ -1581,7 +1599,21 @@ prestart       start     end      end.next
 
 **Solution 1**: iteration
 
+#### 138 Copy List with Random Pointer
 
+**Solution 1**: recursion
+
+使用一个map<Node, Node> 存储 old/new node pair. 递归遍历原始链表，如果当前值已经存储在map中，说明新引用已经被创建过。否则重新copy node, 并更新map. 递归遍历当前节点的next, random结点。
+
+代码错误：由于node多了一个random字符项，递归遍历random会导致死循环（无数次遍历链表）。如果map中已经存在当前节点，就不需要更新next, random了。他们已经被更新过。
+
+Time complexity: $O(n)$, space complexity: $ O(n) $
+
+**Solution 2**: iteration with O(n) space
+
+使用一个map<Node, Node> 存储 old/new node pair. 循环遍历链表。循环开始前，在map中加入head pair. 在每次循环中，复制/更新当前节点的next, random值。循环的结束条件是当原始链表通过next遍历到结尾。
+
+Time complexity: $O(n)$, space complexity: $ O(n) $
 
 #### 141 Linked list cycle
 
@@ -1966,6 +1998,16 @@ Time complexity: $O(n^2)$, space complexity: $ O(n) $
 - 如何判断尾结点可达？是位置>=数组中最后一个位置，而不是==.
 
 Time complexity: $O(n)$, space complexity: $ O(1) $
+
+#### 252 Meeting Rooms
+
+**Solution 1**: brute force
+
+比较每两个meeting, 如果他们有重叠，则返回false. 重叠的判断条件是早开始的meeting 要比后开始的meeting早结束。也就是判断min(end)和max(start)
+
+**Solution 2**: sort
+
+Time complexity: $O(nlogn)$, space complexity: $O(logn)$
 
 #### 435 Non-overlapping intervals
 
