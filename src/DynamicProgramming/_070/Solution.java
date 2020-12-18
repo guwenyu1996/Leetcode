@@ -1,4 +1,4 @@
-package DynamicProgramming._70;
+package DynamicProgramming._070;
 
 public class Solution {
     // My solution, solution 1: dynamic programming

@@ -1425,6 +1425,20 @@ dp没有用到完整数组，而是数组前一个值
 
 Time complexity: $O(n)$, space complexity: $O(1) $
 
+#### 221 Maximal Square
+
+**Solution 1**: dynamic programming
+
+定义状态：dp[i] [j] 从 (0,0) 到 (i,j) 每个点的最大正方形数
+
+初始状态：dp[0] [i] = matrix[0] [i], dp[i] [0] = matrix[i] [0]
+
+状态转移方程：if dp[i] [j] =1, dp[i] [j] = min(dp[i-1] [j], dp[j-1] [i], dp[i] [j]) + 1
+
+结果：max dp[i] [j]
+
+Time complexity: $ O(m*n) $
+
 #### 238 Product of Array Except Self
 
 **Solution 1**: dynamic programming
@@ -2003,11 +2017,57 @@ Time complexity: $O(n)$, space complexity: $ O(1) $
 
 **Solution 1**: brute force
 
-比较每两个meeting, 如果他们有重叠，则返回false. 重叠的判断条件是早开始的meeting 要比后开始的meeting早结束。也就是判断min(end)和max(start)
+比较每两个meeting, 如果他们有重叠，则返回false. 
+
+==如何判断区间重叠？==
+
+Method1: 早开始的meeting要比晚开始的meeting早结束 -> start[0] < start[1] && end[0] <=start[1]，没有overlap
+
+- 如果第一个早开始 -> 第一个结束 < 第二个开始
+- 如果第二个早开始 -> 第二个开始 < 第一个结束
+
+Method2: 判断min(end)>max(start)
+
+![1608211274345](C:/Users/wenyu/AppData/Roaming/Typora/typora-user-images/1608211274345.png)
+
+
 
 **Solution 2**: sort
 
-Time complexity: $O(nlogn)$, space complexity: $O(logn)$
+区间调度问题：
+
+- 按照左端升序：判断前一个右端>后一个左端？
+- 按照右端升序：判断前一个的右端 < 后一个左端？
+
+Time complexity: $O(nlogn)$, space complexity: $O(1)$
+
+#### 253 Meeting Room II
+
+**Solution 1**: sort + priority queue
+
+将数组按照开始时间排序。用一个priority queue存放会议室的结束时间。
+
+遍历数组，如果queue中结束最早的元素 < 当前会议的开始时间，说明该会议室可以承办当前会议。不然需要新开一个会议室。
+
+最后queue的大小就是需要会议室的个数。
+
+代码错误：
+
+- 为什么不按右端排序？左端排序决定会议开始时间，当会议开始时需要判断如何安排会议室
+
+- 为什么需要priority queue? 不能像252一样直接判断数组之间的开始结束关系吗？
+
+  不可以，因为这道题存在重复利用会议室的可能。扎气球的题目，扎一针所有相交的区间都被扎破，但是这道题可以用一针hold 多个数组。
+
+Time complexity: $O(nlogn)$, space complexity: $ O(n) $
+
+**Solution 2**: 扫描线 sweep line
+
+两个int数组分别存会议的开始和结束时间。对数组排序。
+
+用两个指针分别指向数组，指针表示当前会议室最早的结束时间。开始遍历数组，如果开始时间<结束时间，需要多安排一个会议室。否则结束时间指针右移。
+
+Time complexity: $O(nlogn)$, space complexity: $O(n)$
 
 #### 435 Non-overlapping intervals
 
