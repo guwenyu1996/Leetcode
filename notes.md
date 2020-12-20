@@ -1437,7 +1437,11 @@ Time complexity: $O(n)$, space complexity: $O(1) $
 
 结果：max dp[i] [j]
 
-Time complexity: $ O(m*n) $
+Time complexity: $ O(m*n) $, space complexity: $O(m*n)$
+
+Solution 2: better dynamic programming
+
+
 
 #### 238 Product of Array Except Self
 
@@ -2156,6 +2160,32 @@ Time complexity: $O(n^2)$, space complexity: $O(n)$
 区间 B          --------
 
 ### Stack
+
+#### 394 Decode String
+
+**My solution**: use stack
+
+用一个stack存字符串中的关键字(数字&子字符串)，不存储括号[]。
+
+遍历字符串的过程来更新stack. 
+
+- 遇到数字/字符：判断之前的字符是数字还是字符，如果类型相同，则append；类型不同，则需要把之前的字符加入stack
+- 遇到左括号 [: 把之前的字符加入stack
+- 遇到右括号]: 从stack中pop element, 直到拿到数字
+
+遍历结束后，将剩余stringbuilder的内容压入栈。最后不断从栈顶pop element, 如果遇到数字，则copy当前的字符串n次。直到栈为空。
+
+代码错误：
+
+- 如何copy 字符串n次？如果for循环，str +=str, 会copy字符串2^n次
+
+**Solution 1**: use one stack
+
+
+
+**Solution 2**: use two stacks
+
+
 
 #### 496 Next Greater Element I
 

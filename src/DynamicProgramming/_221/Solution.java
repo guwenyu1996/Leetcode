@@ -27,4 +27,21 @@ public class Solution {
         return flag * flag;
     }
 
+    // Solution 1: simplified
+    public int maximalSquare1(char[][] matrix) {
+        int row = matrix.length, col = matrix[0].length;
+        int[][] dp = new int[row + 1][col + 1];
+        int flag = 0;
+
+        for(int i = 0; i < row; i ++){
+            for(int j = 0; j < col; j ++){
+                if(matrix[i][j] == '1'){
+                    dp[i+1][j+1] = Math.min(Math.min(dp[i][j+1], dp[i+1][j]), dp[i][j]) + 1;
+                    flag = Math.max(flag, dp[i+1][j+1]);
+                }
+            }
+        }
+        return flag * flag;
+    }
+
 }
