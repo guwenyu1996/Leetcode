@@ -56,19 +56,25 @@ Java collection: https://www.liaoxuefeng.com/wiki/1252599548343744/1265109905179
 
 Boundary case: num[i]+num[i]
 
-Solution 1: brute force
+**Solution 1**: brute force
 
 Failed reason: when looping a list -> i=0, j=i+1, not start from 0
 
 Time complexity: $O(n^2)$
 
-Solution 2: 2-pass map
+**Solution 2**: 2-pass map
 
 Reduce the lookup time from $O(n)$ to $O(1)$, by map
 
+第一遍pass, 存map (number, index)
+
+第二遍pass, 在map里面查找(target - 当前num), 并且index不相同 
+
 Map(key, value) -> key is set to left-overs, value is set to index
 
-Solution 3: 1-pass map
+**Solution 3**: 1-pass map
+
+Loop over array, 先查找当前map里是否存在剩余值，再向map插入新的(number, index) pair。
 
 注意 1)判断 和  put map的顺序 2) num[i]+num[i] = target
 
@@ -114,7 +120,6 @@ Steps:
 - Sort the array
 - Find sum of two other 
   - two pointers
-  - map
 
 Special cases: 
 
@@ -129,6 +134,24 @@ Special cases:
   boundary case: >= or >
 
 Knowledge: ```Arrays.sort()``` uses quick sort
+
+Time complexity: $ O(n^2) $, space complexity: $O(n)$
+
+**Solution 3**: hashset
+
+这个解法利用001 two sum。固定数组的第一个数num[i], 希望找到剩下两个num[j] + num[k] = -num[i]
+
+给数组排序。循环遍历数组，固定num[i]，在i的右边调用twosum函数。为了避免重复，如果num[i] = num[i-1], 则跳过当前值。
+
+two sum函数里，用set存数组里遍历过的元素。遍历数组，固定num[j], 寻找target = - num[i] - num[j]。如果set里正好有，则找到一组triple. 移动j到下一个不等于当前num[j]的元素。
+
+边界情况：
+
+- input:[0,0,0,0], expect:[0,0,0], actual: [0,0,0] [0,0,0] 如何避免重复情况？
+
+  if found a triple, find the next value that not equal to the current one.
+
+Time complexity: $O(n^2)$, space complexity: $ O(n) $
 
 #### 016 3sum closet
 
@@ -560,6 +583,31 @@ Instead of looking for peak and valley, we can add consecutive profit. e.g. [1, 
 
 Time complexity: $O(n)$, space complexity: $ O(1) $
 
+#### 560 Subarray Sum Equals K
+
+**Solution 1**: brute force
+
+使用双重循环遍历数组，第一重循环表示子数组的开始，第二重循环表示子数组的结束。循环中求子数组sum, 并与k比较。
+
+Time complexity: $O(n^2)$, space complexity: $ O(n^2) $
+
+代码错误：
+
+- 如果当前sum = k, 不能跳出循环。数组存在0的情况，要遍历到数组末尾。
+- 如果当前sum > k, 也不能跳出循环。因为数组无序，后面可能出现<0的数。
+
+**Solution 2**: hashmap
+
+sum[i]表示num[0:i]的和。一个直观的想法是，如果sum[i] = sum[j], 则说明num[i:j]为0.
+
+题目要寻找num[i:j]和为k, 也就是寻找sum[j] - sum[i] = k。
+
+用map<int, int> 存 sum/frequency pair。 map的初始值为(0,1)，也就是开始之前 和为0的情况。 遍历数组，计算sum[i]. 如果map里存在sum[i] - k, 则找到一段和为k的子数组。给count叠加sum[i] - k的频率。然后map里更新当前sum[i] frequency的情况。
+
+代码错误：map需要有初始值(0, 1). 否则当sum[i] = k, 这个情况没有被记入。
+
+Time complexity: $O(n)$, space complexity: $O(n)$ 
+
 #### 915 Partition array into disjoint intervals
 
 **My solution**: dynamic programming
@@ -872,6 +920,26 @@ BFS遍历二叉树，用map存储结点和它的父节点。直到map里同时�
 取其中一个结点，用set存储它所有的父节点。用另一个结点向根节点逆推，第一个在set里的结点就是公共父节点。
 
 Time complexity: $O(n)$, space complexity: $O(n)$
+
+#### 617 Merge two binary trees
+
+**My solution**: recursion
+
+利用递归
+
+如果t1, t2都为空，则递归结束。取t1的val (为null则为默认)，和t2的val(null为默认)。相加得到新节点。
+
+递归得到新节点的左孩子和右孩子结点。如果t1/t2为null, 则传null值。
+
+Time complexity: $O(n)$, space complexity: $O(n)$
+
+**Solution 1**: recursion
+
+简化recursion, 如果t1/t2中有一个为null, 则直接返回剩下一个。
+
+Time complexity: $O(n)$, space complexity: $O(n)$
+
+**Solution 2**: iteration
 
 ### String
 
@@ -2159,13 +2227,59 @@ Time complexity: $O(n^2)$, space complexity: $O(n)$
 
 区间 B          --------
 
+#### 621 Task Scheduler
+
+**Solution 1**: greedy
+
+final time = execution time + idle time, execution time是任务的个数，idle time是任务之间的间隔
+
+统计每个任务的个数，得到map <char, int>, 只对int部分进行排序。
+
+假设frequency=[5,2,1], n = 3. idle time最大就是 n*(max_fre -1)，也就是频次最高的任务之间间隔n个。
+
+遍历数组，我们希望用剩余的任务填充这部分idle time。取第二高的任务频率j，填充至idle time. 最多填充min(max_fre-1, j)。注意如果j>max_fre, 说明剩余的执行时间会安排在当前idle time之外，但不需要额外idle time。因为j < max_fre. 遍历数组，填充idle time. idle time最小为0，不能为负。
+
+Time complexity: $O(n)$, space complexity: $ O(n) $
+
+Solution 2: 
+
+#### 763 Partition Labels
+
+**My solution**: 
+
+map <char, int >存储每个字符在字符串中的频率。遍历字符串，得到map.
+
+第二遍遍历字符串，用set 存储当前字符串中出现的字符。对每一个字符，更新map 中的频率-1, 并加入set. 
+
+如果set中每一个元素对应的frequency为0，则说明这些元素只出现在当前子字符串中。找到这样一个区间，重置set和length. 
+
+代码：iterate a set
+
+```
+Set<String> set = new HashSet<String>();
+for (String s : set)
+    System.out.println(s);
+```
+
+Time complexity: $O(n)$, space complexity: $ O(1) $
+
+可以优化的地方：我们需要知道频率吗？我们只需要知道当前字符最后一次出现的位置
+
+**Solution 1**: greedy
+
+int[26]数组存储每个字符在字符串中最后一次的位置。第一遍遍历字符串，得到数组。
+
+第二遍遍历字符串。int max = Math.max(max, 当前字符最后一次出现的位置)。如果max = 遍历下标i, 则找到这样一个区间。
+
+Time complexity: $O(n)$, space complexity: $O(1) $
+
 ### Stack
 
 #### 394 Decode String
 
 **My solution**: use stack
 
-用一个stack存字符串中的关键字(数字&子字符串)，不存储括号[]。
+用一个stack < String >存字符串中的关键字(数字&子字符串)，不存储括号[]。
 
 遍历字符串的过程来更新stack. 
 
@@ -2175,17 +2289,37 @@ Time complexity: $O(n^2)$, space complexity: $O(n)$
 
 遍历结束后，将剩余stringbuilder的内容压入栈。最后不断从栈顶pop element, 如果遇到数字，则copy当前的字符串n次。直到栈为空。
 
+但是这种解法会有代码重复：遇到右括号和遍历结束都需要不断pop数字。
+
 代码错误：
 
 - 如何copy 字符串n次？如果for循环，str +=str, 会copy字符串2^n次
 
 **Solution 1**: use one stack
 
+用一个stack < char> 存字符串中的数字、字符、以及左括号。
 
+遍历字符串更新stack
+
+- 遇到右括号：pop 栈内元素，直到遇到左括号。pop左括号。pop 数字 得到k值。将字符串复制k遍之后入栈。
+- 遇到左括号/数字/字符：当前元素压入栈
+
+遍历结束后，栈内不包括任何[左括号。从栈内取出所有元素即为所求。
 
 **Solution 2**: use two stacks
 
+用一个countStack< int>存数字，一个stringStack< String>存字符; 分别用一个StringBuilder numBuilder和stringBuilder存遇到的数字和字符
 
+遍历字符串
+
+- 遇到数字， append numBuilder
+- 遇到字符，append stringBuilder
+- 遇到左括号，push number & string to stack，清空当前numBuilder和stringBuilder
+- 遇到右括号,  str = last + k*stringBuilder (last是字符串栈pop(), k 是数字栈pop())，更新stringBuilder为str    
+
+遍历结束后，stringBuilder即为所求
+
+思路错误：如果遇到右括号，需要更新stringBuilder为str。如果右边遇到左括号时，还会把stringBuilder内容压入栈
 
 #### 496 Next Greater Element I
 

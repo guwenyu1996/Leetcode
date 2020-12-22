@@ -1,8 +1,6 @@
 package Array._015;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 
 class Solution {
     // Two point solution
@@ -72,5 +70,47 @@ class Solution {
         }
 
         return result;
+    }
+
+    // Solution 2: hashset
+    public List<List<Integer>> threeSum2(int[] nums) {
+        Arrays.sort(nums);
+        List<List<Integer>> result = new ArrayList<>();
+
+        for(int i = 0; i < nums.length; i ++){
+            if(i == 0 || nums[i-1] != nums[i])
+                twoSum(nums, i, result);
+        }
+        return result;
+    }
+
+    public void twoSum(int[] nums, int n, List<List<Integer>> result){
+        Map<Integer, Integer> map = new HashMap<>();
+        for(int i = n + 1; i < nums.length; i ++){
+            int complement = - nums[n] - nums[i];
+
+            if(map.containsKey(complement)){
+                result.add(Arrays.asList(nums[i], nums[n], nums[map.get(complement)]));
+                while(i + 1 < nums.length && nums[i] == nums[i+1])
+                    i ++;
+            }
+
+            map.put(nums[i], i);
+        }
+    }
+
+    public void twoSum1(int[] nums, int n, List<List<Integer>> result){
+        Set<Integer> set = new HashSet<>();
+        for(int i = n + 1; i < nums.length; i ++){
+            int complement = - nums[n] - nums[i];
+
+            if(set.contains(complement)){
+                result.add(Arrays.asList(nums[i], nums[n], complement));
+                while(i + 1 < nums.length && nums[i] == nums[i+1])
+                    i ++;
+            }
+
+            set.add(nums[i]);
+        }
     }
 }

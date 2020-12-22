@@ -93,4 +93,34 @@ public class Solution {
 
         return str;
     }
+
+    // Solution 2: two stacks
+    public String decodeString2(String s) {
+        Stack<Integer> numStack = new Stack<>();
+        Stack<String> stringStack = new Stack<>();
+        StringBuilder res = new StringBuilder();
+        StringBuilder numRes = new StringBuilder();
+
+        for(char c: s.toCharArray()){
+            if(Character.isDigit(c)){
+                numRes.append(c);
+            }else if(c == '['){
+                numStack.push(Integer.parseInt(numRes.toString()));
+                stringStack.push(res.toString());
+                numRes = new StringBuilder();
+                res = new StringBuilder();
+            }else if(c == ']'){
+                StringBuilder last = new StringBuilder(stringStack.pop());
+
+                for(int k = numStack.pop(); k > 0; k --)
+                    last.append(res);
+
+                res = last;
+            }else{
+                res.append(c);
+            }
+        }
+
+        return res.toString();
+    }
 }
