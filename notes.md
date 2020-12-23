@@ -583,6 +583,14 @@ Instead of looking for peak and valley, we can add consecutive profit. e.g. [1, 
 
 Time complexity: $O(n)$, space complexity: $ O(1) $
 
+#### 283 Move zeroes
+
+**My solution**: two pointer
+
+用一个pointer遍历数组，另一个pointer j存储非零元素的位置, 也就是nums[0:j]都为非零元素。我们希望遍历完一遍数组后，所有非零元素都在开始，即j左边。j的后边填充0.
+
+Time complexity: $O(n)$, space complexity: $O(1)$
+
 #### 560 Subarray Sum Equals K
 
 **Solution 1**: brute force
@@ -921,9 +929,22 @@ BFS遍历二叉树，用map存储结点和它的父节点。直到map里同时�
 
 Time complexity: $O(n)$, space complexity: $O(n)$
 
+#### 543 Diameter of Binary Tree
+
+My solution: recursion
+
+path的计算是：left + right, 如果我们知道left, right的path大小，就能直到当前节点的path大小。这道题求最长path的大小，而且该path不一定通过root, 我们用一个int存max path. 递归遍历节点，计算每个结点的左右path, 从而计算当前节点的path, 与max比较。
+
+代码错误：
+
+- 递归函数的返回值是到当前节点的左/右孩子的最长path, 不是到当前节点的最长path. 如果是当前节点的最长path，最终结果不是一个path, 而是所有节点的最长path叠加
+- path是边的个数。计算当前节点的左/右孩子的最长path：max(left, right) + 1，计算当前节点的path: left + right, 不需要+1！
+
+Time complexity: $O(n)$, space complexity: $ O(n) $
+
 #### 617 Merge two binary trees
 
-**My solution**: recursion
+**My solution**: recursion (创建新树)
 
 利用递归
 
@@ -933,13 +954,23 @@ Time complexity: $O(n)$, space complexity: $O(n)$
 
 Time complexity: $O(n)$, space complexity: $O(n)$
 
-**Solution 1**: recursion
+**Solution 1**: recursion (在原树基础上修改)
 
 简化recursion, 如果t1/t2中有一个为null, 则直接返回剩下一个。
 
 Time complexity: $O(n)$, space complexity: $O(n)$
 
-**Solution 2**: iteration
+**Solution 2**: DFS iteration 
+
+如何能用循环遍历二叉树，并且生成一个merged二叉树？直接修改左树，并且还不用担心左右孩子的连接。
+
+DFS遍历两个二叉树，用stack<TreeNode []> 存储二叉树遍历中的元素。stack初始值为两个二叉树的根节点。不断从栈内pop element。判断右节点是否为null, 如果是直接continue 。修改左节点的值，并且判断左右孩子结点的情况。如果左节点的孩子为空，则孩子值为右节点的孩子，不为空则压入栈。
+
+注意栈内存储的所有元素只可能为右节点为null, 左节点为null的情况不会压入栈。
+
+代码错误： 
+
+- 边界情况：[] [1] 左子树为空，需要在开头判断左子树为null的情况，如果是则直接返回右子树
 
 ### String
 
@@ -1540,6 +1571,26 @@ Time complexity: $O(n)$, space complexity: $O(n) $
 为了得到右下三角的乘积，我们可以使用一个int变量。不断更新temp来得到ans[i] = ans[i] * temp
 
 Time complexity: $O(n)$, space complexity: $ O(1) $
+
+#### 279 Perfect Squares
+
+**My solution**: dynamic programming
+
+一个int[]数组squares存平方数，[1, 4, 9 ...]
+
+定义状态：dp[i] 表示最少用几个平方数的和为i
+
+初始状态：dp[0] = 1
+
+状态转移方程：loop over squares, dp[n] = math.min(min, dp[i-squares] + 1)
+
+结果: dp[n]
+
+Time complexity: $O(n*\sqrt{n})$, space complexity: $O(n)$
+
+**Solution 2**: greedy
+
+
 
 #### 322 Coin change
 
