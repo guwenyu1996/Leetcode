@@ -22,4 +22,23 @@ public class Solution {
 
         return tasks.length + Math.max(0, idleTime);
     }
+
+    // Solution 2: math
+    public int leastInterval2(char[] tasks, int n) {
+        int[] frequency = new int[26];
+        for(char c: tasks)
+            frequency[c-'A'] ++;
+
+        int maxFre = 0;
+        for(int i: frequency)
+            maxFre = Math.max(i, maxFre);
+
+        int count = 0;
+        for(int i: frequency){
+            if(i == maxFre)
+                count++;
+        }
+
+        return Math.max((n+1)*(maxFre-1)+count, tasks.length);
+    }
 }
