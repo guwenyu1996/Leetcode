@@ -885,7 +885,9 @@ Pre-order: root-left-right
 
 in-order:left-root-right
 
+loop 前序遍历，每个结点都是根节点。在中序遍历中找到根节点，根节点左边就是左子树，右边是右子树。为了方便寻找，用map<int, int>存中序遍历和下标。
 
+用int指针遍历前序遍历。在中序遍历中找到该节点。递归寻找左右子树。
 
 #### 226 invert binary tree
 
@@ -917,7 +919,7 @@ The idea is to swap the left and right child of all nodes in the tree. BFS遍历
 感受：
 
 - 递归函数的返回值不一定是所求答案，可以设置一个类变量存储答案，使用其他返回值方便递归。
-- boolean -> int，需要判断true/false然后赋值，不能强制类型转换
+- boolean to int，需要判断true/false然后赋值，不能强制类型转换
 
 Time complexity: $O(n)$, space complexity: $O(n)$
 
@@ -1590,7 +1592,11 @@ Time complexity: $O(n*\sqrt{n})$, space complexity: $O(n)$
 
 **Solution 2**: greedy
 
+贪心算法，用一个平方数 -> 2个平方数 -> 3个平方数的和...可以表达n吗?
 
+写一个函数```divided_by(int n, int count)``` 判断是否能用count数个平方数表示n。loop函数，将count从1试到n。在函数里，loop 平方数set, 递归调用n-square, count - 1
+
+代码错误：循环遍历set不是按照元素加入的顺序，取决于compartor的顺序。如果平方数>n, 不是跳出循环，而是跳过当前循环。
 
 #### 322 Coin change
 
@@ -1699,6 +1705,32 @@ $new list = list1[0] + mergeList(list1[1:], list2), \text{if } list1[0] < list2[
 $new list = list2[0] + mergeList(list1, list2[1:])$
 
 Time complexity: $O(m+n)$, space complexity: $O(m+n) $
+
+#### 023 Merge K Sorted Lists
+
+**My solution**: priority queue
+
+用priority queue存每个链表的一个结点，queue的设定为值越小 优先级越高。queue的初始值为链表数组的头结点。queue只能存非null值，所以每次加入元素前都要判断元素是否为空。每次从queue中取出树顶元素，append到sorted list后面。如果树顶元素next不为null, 将它的下一个结点重新加入queue. 重复这个过程直至queue为空
+
+Time complexity: $O(nlogk)$, space complexity: $O(k)$
+
+**Solution 1**: merge list one by one
+
+如何merge 2 list? 用一个变量ans维护排序过后的链表，用两个指针分别指向链表的头结点，比较两个指针的大小，讲小的指针append在and后，并且指针后移。循环直至两个指针不同时为null. 讲剩下的非空指针append在ans后。
+
+Time complexity: $O(kN)$, space complexity: $O(1)$
+
+**Solution 2**: divide and conquer
+
+Merge k sorted lists
+
+Divide: 把k分成两半
+
+Conquer: 1) merge first k/2 lists,  2) merge second k/2 lists
+
+Merge: merge two lists
+
+T(n) = 2T(n/2) + O(n) -> O(n) = O(Nlogk)
 
 #### 083 Delete duplicates from sorted list
 
@@ -1953,6 +1985,32 @@ Time complexity: $O(N1+N2)$, space complexity: $ O(1) $
 
 ### DFS
 
+#### 130 Surrounded regions
+
+**Solution 1**: dfs
+
+一共有3种可能的结点：字母X, 在边界的字母O, 不在边界的字母O
+
+先深度遍历边界上的O结点，把每个以它为起点，相连的O标记为E (来区分在边界或者不在边界的情况)
+
+最后遍历一遍矩阵。
+
+- 如果遇到E结点，说明它与边界相连，改成O
+- 遇到O结点，说明它不与边界相连，改成X
+- 遇到X结点，什么都不做
+
+corner case: []。如果需要判断列的个数board[0].length， 需要先判断board.length
+
+Time complexity: $O(m*n)$, space complexity: $O(m*n)$
+
+**Solution 2**: bfs
+
+bfs遍历边界上的O结点，用queue存储需要check的边界结点。把以它为起点，相连的O标记为E。
+
+最后同样遍历一遍矩阵.
+
+Time complexity: $O(m*n)$, space complexity: $O(m*n)$
+
 #### 200 Number of islands
 
 这道题实际在求有多少个连通的1区块。
@@ -2066,6 +2124,98 @@ Time complexity: $O(1)$, space complexity: $ O(n) $
 Sol 2需要重复存储相同的最小值，我们可以优化这个部分吗？
 
 使用一个stack< int> 更新当前数值，一个stack<int[]>更新< 最小值，它重复的次数>
+
+#### 232 Implement Queue using stacks
+
+**Solution 1**: two stacks
+
+用两个栈来实现queue FIFO的特性。一个栈以队头为底，一个栈以队尾为底。
+
+需要向队列添加元素的时候，将元素加入队头栈，相当于把元素加入队尾。
+
+如果需要拿队首元素时，把队头栈元素导入队尾栈，相当于队尾栈的top是队首。
+
+Time complexity: push $O(1)$, pop $O(n)$
+
+
+
+#### 295 Find Median from Data Stream
+
+**My solution**: use array + insertion sort
+
+用一个sorted array 记录输入的数据流。对数组使用插入排序，加入新元素。循环数组，如果当前元素>=插入元素，则插入到当前位置。
+
+代码错误：
+
+- 循环数组，如果当前元素>=插入元素，则插入到当前位置。如果新元素最大呢？还需要判断数组是否已经被插入
+- 已经插入需要break, 不然数组会重复插入新元素
+
+Time complexity: add $O(n)$, find $ O(1) $
+
+**Solution 2**: two heaps
+
+用两个heap, 一个max heap存smaller half of data, 一个min heap 存larger half of data。这样max heap的堆顶的小一半中最大的元素，min heap堆顶是大一半中最小的元素。
+
+设置max heap 的大小最多比min heap差1。
+
+- 如果有偶数个元素2n，max heap, min heap的大小都为n, median是max heap的top和min heap的top 的平均。
+- 如果有奇数个元素2n+1, max heap的大小为n+1, min heap的大小为n; 或者反过来。median是大小多的堆的top
+
+heap随着元素的加入可以动态调整。我们需要维持max heap 和min heap的大小，并且max heap的堆顶<min heap的堆顶。
+
+add num
+
+- 如果往max heap里添加元素，先往min heap里添加，取出min heap的堆顶添加到max heap
+- 如果往min heap里添加元素，先往max heap添加，取出max heap的堆顶给min heap
+
+Time complexity: add: $O(logn)$, find $ O(1) $
+
+#### 355 Design Twitter
+
+设计Tweet类数据结构
+
+```
+public Class Tweet{
+	int tweetID;
+	int time;
+	Tweet next;
+}
+```
+
+设计User类数据结构
+
+```
+public class User{
+	int uID;
+	public Set<int> followed; 
+	public Tweet list;
+}
+```
+
+设计Twitter类数据结构
+
+```
+class Twitter{
+	Map<Int, user> userId -> User;
+	
+	// 023 merge k sorted list
+	public List<Integer> getNewsFeed(int userId) {}
+}
+```
+
+
+
+#### 706 Design HashMap
+
+**My solution**: two arraylist
+
+一个array存key, 一个array存value
+
+**Solution 1**: mod + array
+
+计算每个key的hash key, 每个hash key对应一个bucket. 每个bucket是<int, int> pair的集合。通过遍历该bucket寻找key.
+
+![pic](https://leetcode.com/problems/design-hashmap/Figures/706/706_hashmap.png)
 
 
 
@@ -2292,7 +2442,13 @@ final time = execution time + idle time, execution time是任务的个数，idle
 
 Time complexity: $O(n)$, space complexity: $ O(n) $
 
-Solution 2: 
+**Solution 2**: math
+
+填桶。假定所有任务中执行最多的任务次数为max。为了排开该任务，我们至少需要(max-1)(n+1)+1个slot.我们把剩余所有任务填进这个桶里，如果任务频次少于max, 占不到一列；如果任务频率等于max, 则会填到桶外。(max-1)(n+1) + maxCount, maxcount即为任务次数为max的任务个数。
+
+会不会有情况 桶填满了，但还有任务没有分配呢？这种情况不需要idle time, final time直接为任务总个数。最后返回 (max-1)(n+1) + maxCount 和length中较大的一个
+
+Time complexity: $O(n)$, space complexity: $O(1)$
 
 #### 763 Partition Labels
 
