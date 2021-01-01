@@ -1,4 +1,4 @@
-### Array
+Array
 
 #### Java knowledge
 
@@ -1183,52 +1183,7 @@ dp[n] = (dp[p]) dp[q]
 
 Time complexity: $O(max(M,N))$, space complexity: $ O(max(M,N)) $
 
-#### 076 Minimum Window Substring
 
-==滑动窗口思路==
-
-1. 使用双指针，维护一个左闭右开区间[left, right), left = right = 0
-2. 不断扩大右指针，直至窗口中的数据满足要求
-3. 停止right，增加left指针缩小窗口，直到窗口中的数据不符合要求。
-4. 重复2,3，直到right 到达尽头。
-
-right指针相当于在寻找可行解，left指针在优化这个可行解。
-
-需要考虑的问题
-
-1. 当移动 `right` 扩大窗口，即加入字符时，应该更新哪些数据？
-2. 什么条件下，窗口应该暂停扩大，开始移动 `left` 缩小窗口？
-3. 当移动 `left` 缩小窗口，即移出字符时，应该更新哪些数据？
-4. 我们要的结果应该在扩大窗口时还是缩小窗口时进行更新？
-
-**Solution 1**: sliding windows
-
-思路错误：
-
-- 右指针的增加条件 不是找到一个在字符就停止，而是窗口里的值需要包含所有字符
-
-- 左右指针代表的是什么？注意左闭右开，还是左闭右闭
-
-- 如何判断窗口中的数据满足要求？
-
-  用一个hashmap(char, int)存元素出现的次数，初始化map为每个元素在给定字符串中的次数。当map所有 int <= 0, 则说明窗口数据符合要求。
-
-  为什么不是等于0? 有一个窗口出现多个元素
-
-边界情况：字符串中可能包含重复字符，Input:"a" "aa", expected: ""
-
-代码错误：如何遍历map?
-
-```
-        for(Map.Entry<Character, Integer> entry: count.entrySet()){
-            //entry.getValue()
-            //entry.getKey()
-        }
-```
-
-代码优化：可以不用三个int, 两个存放start end index, 一个存length. 可以优化成2个，end index可以用过start+length计算。
-
-Time complexity: $O(S+T)$, space complexity: $ O(S+T) $
 
 #### 415 Add strings
 
@@ -1286,8 +1241,6 @@ Time complexity: > $ O(n) $
 如果新字符串还含有输入字符串，说明是重复字符串。
 
 Time complexity: $O(n^2)$, space complexity: $ O(n) $
-
-
 
 #### 567 Permutation in String
 
@@ -1526,6 +1479,71 @@ dp没有用到完整数组，而是数组前一个值
 
 Time complexity: $O(n)$, space complexity: $O(1) $
 
+#### 198 House Robber
+
+**Solution 1**: my solution dynamic programming
+
+对于每一天来说，有两个选择：
+
+- 偷，当前偷窃金额为 前一天不偷金额+今日偷钱
+- 不偷，则当前偷窃金额为 前一天不偷 或者 偷钱的最大值
+
+定义状态：dp[2] [num], dp[0]是当天偷钱，dp[1]是当天不偷钱
+
+初始状态： dp[0] [0] = num[0] (第一天偷钱)
+
+状态转移方程：dp[0] [i] = dp[1] [i-1] + num[i], dp[1] [i] = math.max(dp[0] [i-1], dp[1] [i-1])
+
+结果：max(dp[0] [nums.length-1], do[1] [nums.length-1])
+
+Time complexity: $O(n)$, space complexity: $O(n)$
+
+简化：可以用两个int代替int数组，空间复杂度为$O(1)$ 
+
+**Solution 2**: dynamic programming
+
+定义状态：dp[i], 第i天偷钱的最大值
+
+初始状态： dp[0] = nums[0], dp[1] = max(num[0], num[1])
+
+状态转移方程：dp[i] = max(dp[i-2] + nums[i], dp[i-1])
+
+结果：dp[num.length - 1]
+
+思路错误：注意dp里前两个数的初始值，dp[1] 不是第二天抢，而是第一天抢和第二天抢的最大值
+
+Time complexity: $O(n)$, space complexity: $O(n)$
+
+#### 213 House Robber I
+
+这道题和198的区别是数组有环，即最后一天连着第一天
+
+**My solution**: dynamic programming
+
+利用house robber里sol 2的解法，用两个数组，分别代表第一天偷了和第一天没偷的情况。
+
+定义状态：dp[2] [num.length-1], dp[0]表示第一天偷了，dp[1]表示第一天没偷
+
+初始状态：初始前两天的情况。dp[0] [0] = num[0], dp[0] [1] =max(num[0], num[1]),
+
+ dp[1] [0] = 0, dp[1] [1] = num[1]
+
+状态转移方程：dp[i] = max(dp[i-2] + nums[i], dp[i-1])
+
+​							对于最后一天 i =num.length - 1, 它不能同时和第一天抢，所以dp[0] [last] = dp[0] [last - 1]
+
+结果：max(dp[0] [last], dp[1] [last])
+
+Time complexity: $O(n)$, space complexity: $O(n)$
+
+**Solution 1**:
+
+因为第一天和最后一天相连，可以把nums拆成两个数组，一个从nums[0:last-1], 一个从nums[1:last]
+
+用198的解法，分别求每个数组最多能抢多少钱，最后取max
+
+Time complexity: $O(n)$, space complexity: $ O(1) $
+
 #### 221 Maximal Square
 
 **Solution 1**: dynamic programming
@@ -1539,10 +1557,6 @@ Time complexity: $O(n)$, space complexity: $O(1) $
 结果：max dp[i] [j]
 
 Time complexity: $ O(m*n) $, space complexity: $O(m*n)$
-
-Solution 2: better dynamic programming
-
-
 
 #### 238 Product of Array Except Self
 
@@ -1983,7 +1997,30 @@ Time complexity: $O(N1+N2)$, space complexity: $ O(1) $
 
 把链表加入栈，利用栈先进后出的特点来反转列表。从栈顶取元素，一位一位相加。
 
-### DFS
+### DFS/BFS
+
+BFS 广度优先思想是利用队列，每次将结点周围的结点加入队列。BFS的特点是找到的路径一定是最短的，但空间复杂度比DFS大很多。
+
+#### 111 Minimum Depth of Binary Tree
+
+**Solution 1**: bfs
+
+bfs遍历树，用queue< TreeNode >存当前遍历的结点。用int变量表示当前遍历的树的高度。bfs遍历时，用一个int变量存当前层的结点个数，loop循环取出queue的头元素并处理。如果当前节点的左右孩子都有空，说明该结点是叶子结点。可以直接返回当前遍历的树的高度。否则将左右非空孩子加入队列。
+
+思路错误：
+
+- 最短路径指的是从根节点到叶子结点的最短距离，而不是只要左右孩子其一为null, 就算最短距离了。
+- 是在层次遍历前更新高度还是层次遍历后？应该是遍历前。
+
+Time complexity: $O(n)$, space complexity: $ O(n) $
+
+**Solution 2**: recursion
+
+递归遍历树，从树底到树顶计算树的高度。如果左右都为null, return 1。用一个int变量表示树底到当前元素的高度。递归调用 求左右非空孩子的高度，return min+1.
+
+思路错误：只有当左右孩子非空时，才递归调用。不然如果递归调用null结点，最短距离算的是第一个左右孩子非空的结点的高度。
+
+Time complexity: $O(n)$, space complexity: $O(logn)$
 
 #### 130 Surrounded regions
 
@@ -2024,6 +2061,8 @@ Time complexity: $ O(M*N) $, space complexity: $O(M*N)$ by worst case
 **Solution 2**: bfs
 
 广度遍历图，每遍历到一个1位置时，将其视为广度遍历的根节点。将已经访问过的结点值更改为2，来区分访问/未访问过的结点。在广度优先搜索时，使用stack, stack里存储每个点的index(row * N + columns)。这样可以从index再得到row, column
+
+
 
 ### Design
 
@@ -2125,6 +2164,24 @@ Sol 2需要重复存储相同的最小值，我们可以优化这个部分吗？
 
 使用一个stack< int> 更新当前数值，一个stack<int[]>更新< 最小值，它重复的次数>
 
+#### 225 Implement Stack using queues
+
+**Solution 1**: two queues
+
+用两个queue (FIFO)模仿stack (FILO).
+
+push：往queue里添加元素，并更新top指针为最新元素
+
+peek: 直接返回top指针
+
+poll: 需要取stack的头(queue的尾元素)，把queue前n-1个元素挪到另一个queue, 返回queue最后一个元素，并更新top指针。swap两个queue.
+
+Time complexity: push$O(1)$, poll $ O(n) $
+
+**Solution 2**: one queue
+
+poll: 把queue前n-1个元素重新加到queue末尾，更新top指针，返回queue第一个元素。
+
 #### 232 Implement Queue using stacks
 
 **Solution 1**: two stacks
@@ -2133,11 +2190,19 @@ Sol 2需要重复存储相同的最小值，我们可以优化这个部分吗？
 
 需要向队列添加元素的时候，将元素加入队头栈，相当于把元素加入队尾。
 
-如果需要拿队首元素时，把队头栈元素导入队尾栈，相当于队尾栈的top是队首。
+如果需要拿队首元素时，把队头栈元素导入队尾栈，相当于队尾栈的top是队首。取到队首后再把元素倒回到队头栈。
 
 Time complexity: push $O(1)$, pop $O(n)$
 
+**Solution 2**: improved two stacks
 
+用两个栈来实现queue FIFO的特性。一个栈以队头为底，一个栈以队尾为底。
+
+需要向队列添加元素的时候，将元素加入队头栈，相当于把元素加入队尾。
+
+需要拿队首元素时，判断队尾栈是否为空，如果非空则队尾栈的top是队首。如果是空，则搬运所有队头栈的元素到队尾栈。
+
+这种解法两个栈可能同时有元素，而解法一只有一个栈有元素，另一个是为了倒腾元素。
 
 #### 295 Find Median from Data Stream
 
@@ -2203,7 +2268,19 @@ class Twitter{
 }
 ```
 
+#### 380 Insert Delete GetRandom O(1)
 
+**Solution**: hashmap
+
+题目要求 判断元素是否存在 用O(1) 的时间复杂度 -> 提示用hashmap存储
+
+因为题目中想要getRandom 随机返回一个元素，但是hashmap中并没有index. 我们需要把map.key转成一个list, 从list中随机删除一个数。
+
+这道题用map <int, int> 存value/index的pair, 用一个arraylist存value
+
+delete: 从list中删除指定下标的元素，时间复杂度为O(n). 如果想把时间复杂度缩小为O(1), 我们可以交换待删除元素和最后一个元素，删除最后一个元素，即待删除元素。
+
+代码错误：更新list中的元素 ```list.set(index, value)```
 
 #### 706 Design HashMap
 
@@ -2615,6 +2692,53 @@ Time complexity: $O(n)$ (一共有n个元素，最多pop n次), space complexity
 
 ### Sliding window
 
+#### 076 Minimum Window Substring
+
+==滑动窗口思路==
+
+1. 使用双指针，维护一个左闭右开区间[left, right), left = right = 0
+2. 不断扩大右指针，直至窗口中的数据满足要求
+3. 停止right，增加left指针缩小窗口，直到窗口中的数据不符合要求。
+4. 重复2,3，直到right 到达尽头。
+
+right指针相当于在寻找可行解，left指针在优化这个可行解。
+
+需要考虑的问题
+
+1. 当移动 `right` 扩大窗口，即加入字符时，应该更新哪些数据？
+2. 什么条件下，窗口应该暂停扩大，开始移动 `left` 缩小窗口？
+3. 当移动 `left` 缩小窗口，即移出字符时，应该更新哪些数据？
+4. 我们要的结果应该在扩大窗口时还是缩小窗口时进行更新？
+
+**Solution 1**: sliding windows
+
+思路错误：
+
+- 右指针的增加条件 不是找到一个在字符就停止，而是窗口里的值需要包含所有字符
+
+- 左右指针代表的是什么？注意左闭右开，还是左闭右闭
+
+- 如何判断窗口中的数据满足要求？
+
+  用一个hashmap(char, int)存元素出现的次数，初始化map为每个元素在给定字符串中的次数。当map所有 int <= 0, 则说明窗口数据符合要求。
+
+  为什么不是等于0? 有一个窗口出现多个元素
+
+边界情况：字符串中可能包含重复字符，Input:"a" "aa", expected: ""
+
+代码错误：如何遍历map?
+
+```
+        for(Map.Entry<Character, Integer> entry: count.entrySet()){
+            //entry.getValue()
+            //entry.getKey()
+        }
+```
+
+代码优化：可以不用三个int, 两个存放start end index, 一个存length. 可以优化成2个，end index可以用过start+length计算。
+
+Time complexity: $O(S+T)$, space complexity: $ O(S+T) $
+
 #### 239 Sliding Window Maximum
 
 **Solution 1**: deque + monotonous stack 单调栈
@@ -2691,6 +2815,21 @@ Time complexity: $ O(logn) $, space complexity: $ O(1) $
 
 ### Backtracking
 
+回溯部分框架
+
+```
+result = []
+def backtrack(路径, 选择列表):
+    if 满足结束条件:
+        result.add(路径)
+        return
+
+    for 选择 in 选择列表:
+        做选择
+        backtrack(路径, 选择列表)
+        撤销选择
+```
+
 #### 039 combination sum
 
 Solution: backtracking
@@ -2723,6 +2862,29 @@ Time complexity: $ O(N^{T/M + 1}) $, where N be the number of candidates, T be t
 #### 046 Permutations
 
 使用list存当前的permutation, set存已经使用过的数字。已经使用过的数字不能再次使用。
+
+#### 051 N Queen
+
+**Solution**: backtracking
+
+设计一个helper函数以递归的方式找到解。函数的签名是```helper(char[][] board, int n)``` 。n代表要放第n个棋子
+
+函数的过程是
+
+- 首先判断是否已经放完全部棋子，如果是则将棋盘加入解
+- 放置第n个棋子，我们假定第n个棋子放在第n行
+- 遍历棋盘的列，判断棋子放在这列是否可行。如果可行，则递归放置n+1个棋子。
+- 在递归结束后，还需撤回当前选择的影响。即将棋子从棋盘撤出。
+
+如何判断棋子放在这个位置是否可行？
+
+方法一：判断所有行、列、对角线、斜对角线含有至多一个元素
+
+方法二：判断棋子加入的列含有至多一个元素，棋子之上的左对角线和右对角线含有至多一个元素。
+
+代码错误：获得棋子的左对角线时，row + col = const, col = const - row. 还需要判断row 是否在棋盘的最小最大范围里。
+
+Time complexity: $O(N!)$, space complexity: $O(n^2 ) $
 
 #### 078 Subsets
 
@@ -2760,4 +2922,3 @@ Time complexity: $ O(N*2^N)$, space complexity: $ O(N*2^N)$
 
 Number of exploration $ P(9, K) = \frac{9!}{(9-K)!} $, each exploration takes constant time. So time complexity: $O(\frac{9!}{(9-K)!})$, space complexity: $ O(K) $
 
-#### 
