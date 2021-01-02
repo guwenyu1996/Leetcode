@@ -1628,6 +1628,76 @@ Solution 1: improved my solution
 
 可以改进的地方：初始dp[i]不为0，而是max_int。这样的话不用对每一个无解状态都修改为-1, 而是在最后返回值判断是不是max_int 从而得知有没有解.
 
+#### 337 House Robber III
+
+**Solution 1**: recursion
+
+延续前两题思路，每一个结点存储两个结果，分别是抢和不抢。
+
+邻居是二叉树形式，怎么从一个结点推另一个结点？如果抢当前结点，抢的钱=左孩子不抢+右孩子不抢。
+
+如果不抢，钱=左孩子抢/不抢的max + 后孩子抢/不抢的max
+
+Time complexity: $O(N)$, space complexity: $O(logn)$
+
+**Solution 2**: recursion with memorization
+
+sol1会重复遍历一些结点。为了简化时间复杂度，我们可以把中间结果存到一个map<TreeNode, int[]>中。
+
+Time complexity: $O(N)$, space complexity: $O(n)$
+
+#### 416 Partition Equal Subset Sum
+
+**My solution**: brute force
+
+判断数组元素任意方式求和是否是总和的一半。
+
+怎么求任意combination? 每个元素都有 加入combination 或者 不加 这两种选择。
+
+遍历数组，用一个list存数组任意combination组成的和。第二重循环遍历之前的combination, 对于每一个combination, 都可以选择 +当前元素 或者不加。
+
+Time complexity: $O(n^2)$, space complexity: $O(2^n )$
+
+**Solution 1**: brute force recursion
+
+用递归代替物理数组。设计```helper(num, index, target)```函数，判断num[index:]之后能不能凑成target. 如果target < 0 或者index超出边界则势必。否则递归调用(index + 1, target)和(index + 1, target - num[index])
+
+Time complexity: $O(2^n)$, space complexity: $O(n)$
+
+**Solution 2**: sol 1 + memo
+
+sol1中会出现重复调用。用一个Boolean[nums.length] [sum] dp来存中间结果，dp[index] [sum]表示num[index:]之后能不能凑成sum.
+
+boolean (基本数据类型) -> Boolean (引用数据类型)
+
+代码错误：Boolean数组大小的初始值应为[sum + 1], 因为sum包括0到sum.
+
+Time complexity: $O(m*n)$, space complexity: $ O(m*n) $
+
+**Solution 3**: bottom up dynamic programming
+
+定义状态：boolean[nums.length + 1] [sum + 1] dp, 表示num[0:index]是否能凑成sum
+
+初始状态： dp[0] [0] = true
+
+状态转移方程：1) if dp[i-1] [sum] = true -> dp[i] [sum ] = true
+
+​                              2) dp[i-1] [sum] = true -> dp[i] [sum+num[i]] = true
+
+结果：dp[nums.length] [sum]
+
+Time complexity: $O(m*n)$, space complexity: $O(m*n) $
+
+**Solution 4**: simply sol3
+
+我们需要用到二维数组吗？每一轮计算dp[i], 我们只需要用到dp[i-1]
+
+简化dp[] [] 为dp[]
+
+代码错误：可以直接修改dp吗？e.g. if dp [sum] = true -> dp[i] [sum +num[i] ] = true
+
+不可以，因为你不知道每一个dp[i]为true是这一轮为true还是上一轮为true. 所以每一轮要新建一个boolean[] temp, 修改temp的结果，最后把dp赋值为temp
+
 #### 1143 Longest common subsequence
 
 最长公共子串
