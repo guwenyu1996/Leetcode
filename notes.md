@@ -583,6 +583,46 @@ Instead of looking for peak and valley, we can add consecutive profit. e.g. [1, 
 
 Time complexity: $O(n)$, space complexity: $ O(1) $
 
+#### 169 Majority Element
+
+**My solution**: map
+
+用map<int, int>存对应数字和它们出现的频率。第一遍遍历数组，更新map. 第二遍遍历map, 找到频次大于数组一半个数的数。
+
+Time complexity: $O(n)$, space complexity: $ O(n) $
+
+**Solution 1**: sort
+
+给数组排序，majority element会出现在n/2的位置。它可以是0.... n/2+1, 或者是n/2 -1 ...n
+
+Time complexity: $O(nlogn)$, space complexity: $ O(logn) $
+
+**Solution 2**: random
+
+取一个随机数，当做数组下标。检查以随机数为下标的元素的个数是否超过n/2。如果不是，则重复这个过程。直到找到一个随机数满足为它下标的元素的个数是否超过n/2。
+
+Space complexity: $O(1) $
+
+**Solution 3**: divide and conquer
+
+divide: 把数组分成两半
+
+conquer: 分别求两半的majority element
+
+merge: merge左右两半的结果。如果左右结果相等，则直接返回。如果结果不等，则分别check 两个数在当前数组(左+右)中的频次，返回频次高的那个。
+
+思路误区：我最开始想的是在merge阶段，如果左右结果不等，返回一个int[]数组。再上一层merge数组和数组。但是这样又需要判断数组个数0/1, 又需要merge.
+
+T(n) = 2T(n/2) + O(n), T(n) = O(nlogn)
+
+**Solution 4**: Boyer-Moore Voting Algorithm
+
+用一个int变量记录当前candidate, int变量count记录当前candidate的频次。
+
+设置candidate为数组头元素。遍历数组，如果当前元素不等于candidate, 则count -1, 如果相等则+1. 当count为零，说明到数组到现在candidate出现的次数没有超过1/2, 更新candiate为当前元素。
+
+Time complexity: $O(n)$, space complexity: $O(1)$
+
 #### 283 Move zeroes
 
 **My solution**: two pointer
@@ -888,6 +928,20 @@ in-order:left-root-right
 loop 前序遍历，每个结点都是根节点。在中序遍历中找到根节点，根节点左边就是左子树，右边是右子树。为了方便寻找，用map<int, int>存中序遍历和下标。
 
 用int指针遍历前序遍历。在中序遍历中找到该节点。递归寻找左右子树。
+
+#### 114 Flatten Binary Tree To Linked List
+
+**My solution**: recursion
+
+设计一个递归函数```helper(TreeNode node)```。这个函数的目的是将node的左右孩子flatten到右边。
+
+首先分别递归调用node的左孩子和右孩子，得到left & right结点。所以左右孩子都已经flatten. 如果左孩子不为空，则将右孩子接到左孩子末尾。node右孩子位置设成左孩子，左孩子为null。
+
+Time complexity: $O(n)$, space complexity: $O(n)$
+
+**Solution 1**: Morris traversal
+
+
 
 #### 226 invert binary tree
 
@@ -1697,6 +1751,14 @@ Time complexity: $O(m*n)$, space complexity: $O(m*n) $
 代码错误：可以直接修改dp吗？e.g. if dp [sum] = true -> dp[i] [sum +num[i] ] = true
 
 不可以，因为你不知道每一个dp[i]为true是这一轮为true还是上一轮为true. 所以每一轮要新建一个boolean[] temp, 修改temp的结果，最后把dp赋值为temp
+
+#### 698 Partition to K Equal Sum Subsets
+
+**My solution**: brute force
+
+用一个int[k]数组代表k个subsets的和。类似416的sol1，brute force遍历数组，把每个数填到subset里，判断subset有没有超出界限。 
+
+代码错误：如果要修改int[]数组元素，不能用```for(int i: sum)``` foreach写法，因为int是基本数据类型，修改了基本数据类型不会影响int[]
 
 #### 1143 Longest common subsequence
 
