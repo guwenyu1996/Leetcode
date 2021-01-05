@@ -28,4 +28,25 @@ public class Solution {
         return node;
     }
 
+    // Solution 1: Morris traversal
+    public void flatten1(TreeNode root) {
+        if(root == null)
+            return;
+
+        TreeNode node = root;
+        while(node != null){
+            if(node.left != null){
+                TreeNode rightMost = node.left;
+                while(rightMost.right != null)
+                    rightMost = rightMost.right;
+
+                rightMost.right = node.right;
+                node.right = node.left;
+                node.left = null;
+            }
+            node = node.right;
+        }
+
+    }
+
 }

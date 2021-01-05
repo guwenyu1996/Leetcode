@@ -941,7 +941,55 @@ Time complexity: $O(n)$, space complexity: $O(n)$
 
 **Solution 1**: Morris traversal
 
+用一个结点node，把node左子树的一部分接到右子树上。左子树的一部分要求是没有右孩子。
 
+所以我们遍历左子树的右孩子，找到第一个没有右孩子的结点。把node结点的右孩子接到左子树右孩子上，然后把node结点的右孩子设为左子树，左子树设为null. 把node结点右移一位，设成node.right. 然后重复上述过程，直到node为空。
+
+![img](https://leetcode.com/problems/flatten-binary-tree-to-linked-list/Figures/114/img15.png)
+
+Time complexity: $O(n)$, space complexity: $ O(1) $
+
+#### 116 Populating Next Right Pointers in Each Node
+
+**My solution**: bfs + stack
+
+bfs遍历树，每个结点的next就是它在bfs遍历中的下一个结点。使用一个queue，queue里存需要遍历的结点序列。在层次遍历之前，取当前queue的size当做层次遍历节点的个数。对于每个结点，执行下面一些操作：
+
+- 如果左右孩子非空，则向queue中加入非空孩子
+- 如果当前结点不是层次遍历的最后一个，则设置next为queue的头结点
+- 如果是，则next为null(continue)
+
+代码错误：设置next和向queue中加入非空孩子的顺序不能乱。如果先continue, 则没有向queue中加入孩子结点。
+
+Time complexity: $O(n)$, space complexity: $O(1) $
+
+**Solution 2**: Using previously established next pointers
+
+![1609776435925](C:/Users/wenyu/AppData/Roaming/Typora/typora-user-images/1609776435925.png)
+
+next pointer一共有两种情况：
+
+- node.left.next 指向 node.right，left right有相同父节点
+- node.right.next 指向node.next.left, right和下一个的left有不同的父节点
+
+我们用循环的方法层次遍历树。用leftmost表示每层的第一个结点，用node结点遍历该层结点。
+
+遍历有孩子结点的每一层(leftmost.left = null?)：
+
+对于每层的每个node结点，做以下操作：
+
+- 设置node.left的next结点
+- 判断是不是该层最后一个结点 (node.next = null?)
+  - 如果不是，设置node.right的next结点
+- 层次遍历，把node设为node.next
+
+该层遍历结束，则遍历下一层，更新leftmost结点为它的左节点
+
+可以理解成，对于每一个结点，修改它左右孩子的next指针。通过next指针遍历树。
+
+代码错误：在层次遍历时，是遍历有孩子结点的每一层？还是遍历头结点不为null的每一层？如果遍历不为null的每一层，那么node.left.next是空。
+
+Time complexity: $O(n)$, space complexity: $ O(1) $
 
 #### 226 invert binary tree
 
@@ -958,6 +1006,24 @@ Time complexity: $O(n) $ as visit every node exactly once, space complexity: $O(
 The idea is to swap the left and right child of all nodes in the tree. BFS遍历tree, use a queue to store nodes whose children not swap yet. Pop up an element from queue and swap its children. When queue is empty, invertion is done.
 
 这道题不需要delimiter. 每层的结点都是swap children, task没有区别。
+
+#### 230 Kth Smallest Element in a BST
+
+**My solution**: iteration
+
+题目要求二叉搜索树中，第k小的元素。那么通过判断该元素是树中第几小的元素，来判断第k小的元素的位置。
+
+设计一个count函数，接受一个TreeNode。该函数用来求包括该结点的结点个数。
+
+用一个TreeNode类型node, 判断该结点是否是第k小的元素。用一个int类型temp 表示当前结点是第几小的元素。用count计算node.left的结点个数，并更新到temp里。
+
+- 如果temp + 1 = k, 所求第k大即是当前node结点
+- 如果temp + 1 < k, 当前node结点比所求第k大。需要temp + 1 (更新当前node结点)，并把node指向node.right
+- 如果temp + 1 < k，当前node结点比所求第k大小。需要撤销掉node.left的结点个数，并把node指向node.left
+
+Time complexity: $O(n)$, space complexity: $ O(1) $
+
+
 
 #### 236 Lowest Common Ancestor of a Binary Tree
 
