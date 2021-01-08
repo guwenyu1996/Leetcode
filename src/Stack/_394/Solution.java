@@ -18,7 +18,7 @@ public class Solution {
                 while(!stack.isEmpty()){
                     String temp = stack.pop();
                     if(temp.matches("[0-9]+")){
-                        str = str.repeat(Integer.parseInt(temp));
+                        //str = str.repeat(Integer.parseInt(temp));
                         break;
                     }else
                         str = temp + str;
@@ -50,7 +50,7 @@ public class Solution {
         while(!stack.isEmpty()){
             String temp = stack.pop();
             if(temp.matches("[0-9]+")){
-                str = str.repeat(Integer.parseInt(temp));
+                //str = str.repeat(Integer.parseInt(temp));
                 stack.push(str);
                 str = "";
             }else

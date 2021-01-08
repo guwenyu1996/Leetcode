@@ -9,7 +9,7 @@ public class FullBinaryTree {
         if(root == null)
             return height;
         else
-            return geiHeight(root.left, height + 1);
+            return 0; //return geiHeight(root.left, height + 1);
     }
 
     public boolean ifFullBinaryTree(Node left, Node right){
@@ -17,7 +17,7 @@ public class FullBinaryTree {
             return true;
         else if(left == null || right == null)
             return false;
-        return isFullBinaryTree(left.left, right.right);
+        return false;//return isFullBinaryTree(left.left, right.right);
     }
 
     public int count(Node root){
@@ -26,9 +26,9 @@ public class FullBinaryTree {
         int height = getHeight(root, 0);
         Node left = root.left;
         if(ifFullBinaryTree(left.left, left.right))
-            return count(root.right) + Math.pow(2, height -1);
+            return count(root.right) + (int)Math.pow(2, height -1);
         else
-            return count(root.left) + Math.pow(2, height - 2);
+            return count(root.left) + (int)Math.pow(2, height - 2);
     }
 
 }

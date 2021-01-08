@@ -1009,7 +1009,7 @@ The idea is to swap the left and right child of all nodes in the tree. BFS遍历
 
 #### 230 Kth Smallest Element in a BST
 
-**My solution**: iteration
+**My solution**: iteration + binary search
 
 题目要求二叉搜索树中，第k小的元素。那么通过判断该元素是树中第几小的元素，来判断第k小的元素的位置。
 
@@ -1023,7 +1023,31 @@ The idea is to swap the left and right child of all nodes in the tree. BFS遍历
 
 Time complexity: $O(n)$, space complexity: $ O(1) $
 
+**Solution 1**: inorder traversal + recursion
 
+二叉搜索树的特点是，左子树的所有节点都比父节点小，右子树的所有节点都比父节点大。所以二叉搜索树的中序遍历(左-中-右)是一个递增的序列。求二叉搜索树中第k小的元素，即是求序列中第k个元素。
+
+用递归的方法对二叉搜索树进行遍历。用一个ArrayList< Integer>存储中序遍历序列。 设计一个递归函数帮助inorder traversal 
+
+```
+public inorder(TreeNode node, List<Integer> list){
+ 	inorder(node.left);
+ 	// do something
+ 	inorder(node.right);
+}
+```
+
+Time complexity: $O(n)$, space complexity: $ O(n) $
+
+**Solution 2**: inorder traversal + iteration
+
+用循环的方法对二叉搜索树进行遍历。用stack辅助遍历。用一个TreeNode类型变量node表示当前遍历节点。
+
+如果当前node结点不为空，将当前结点入栈，并循环查找它的左节点。直到左节点为空。
+
+这时从stack里pop首元素，设为node。k值自减，表示已经找到一个最小元素。如果k值为0，则找到第k小的元素，直接返回当前元素。然后根据前序遍历顺序（左中右），处理node的右子树。 
+
+Time complexity: $O(n)$, space complexity: $ O(n) $
 
 #### 236 Lowest Common Ancestor of a Binary Tree
 
@@ -1050,6 +1074,33 @@ BFS遍历二叉树，用map存储结点和它的父节点。直到map里同时�
 取其中一个结点，用set存储它所有的父节点。用另一个结点向根节点逆推，第一个在set里的结点就是公共父节点。
 
 Time complexity: $O(n)$, space complexity: $O(n)$
+
+#### 297 Serialize and Deserialize Binary Tree
+
+**My solution**: bfs
+
+**serialize: TreeNode root -> String**
+
+使用bfs遍历树，将整棵树序列化为二叉树的层次遍历序列。用queue 辅助层次遍历，queue的初始值为非空的root结点。如果root为空，则序列化结果为""。用一个stringbuilder存序列化结果，其中每个结点以','分隔。
+
+每次取queue的头结点。判断这个结点是空节点还是有意义的结点。因为题目里规定结点的值在[-1000,1000]之间。考虑到queue不能存null元素，我们设定null的结点的值为-1001。我们只在字符串里添加孩子结点的null元素，标志着一个非空结点的左右孩子是null.
+
+- 空节点，这个结点序列化为"null"
+- 非空节点，这个结点序列化为它的值。向queue中加入该结点的左右孩子结点。
+
+重复这个过程，直到queue为空。因为字符串的最后一个字符是',', 为了方便反序列化，我们把最后一个逗号去掉。
+
+**deserialize: String -> TreeNode node**
+
+反序列的过程也是按照层次遍历的思想，依次设置上层结点的孩子为下层结点。用一个list<TreeNode > 存当前处理的上层结点，一个list<TreeNode>存 当前处理的下层结点，int变量index表示当前遍历到的下层结点下标。
+
+list的初始值为root结点。依次取list中的元素node, 如果node结点为空，则跳过该结点。如果不为空，则依次取index, index+1两个孩子结点。设置结点间的父子联系，并把孩子结点加入下层结点列表中。当层次遍历结束，则更新上层结点列表为下层结点。接着遍历，直到index遍历到数组尾。
+
+代码错误：判断string是否相等，== 还是 equals?
+
+**Solution 1**: dfs inorder + recursion
+
+
 
 #### 543 Diameter of Binary Tree
 
