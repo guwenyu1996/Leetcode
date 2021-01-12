@@ -623,6 +623,31 @@ T(n) = 2T(n/2) + O(n), T(n) = O(nlogn)
 
 Time complexity: $O(n)$, space complexity: $O(1)$
 
+#### 240 Search 2D Matrix II
+
+**My solution**: brute force
+
+因为每行是从小到大排序好的，所以从每行的开头搜，如果搜到目标数字 则直接返回结果。搜索到比目标数字大的元素，下移一行。直到搜索到最后一行
+
+Time complexity: $O( m*n )$, space complexity: $ O(1) $
+
+**Solution 2**: binary search
+
+因为每行是有序的，对每一行进行二分查找。
+
+Time complexity: $O(mlogn)$, space complexity: $ O(1) $
+
+**Solution 3**: Search Space Reduction
+
+假设从矩阵的左下角开始寻找。判断当前元素与target的大小
+
+- 如果当前元素 < target, 向右走
+- 如果当前元素 > target, 向上走
+
+走到直到outside matrix. 也就是说while (横坐标 条件&&纵坐标条件)
+
+Time complexity: $O(m+n)$, space complexity: $ O(1) $
+
 #### 283 Move zeroes
 
 **My solution**: two pointer
@@ -630,6 +655,32 @@ Time complexity: $O(n)$, space complexity: $O(1)$
 用一个pointer遍历数组，另一个pointer j存储非零元素的位置, 也就是nums[0:j]都为非零元素。我们希望遍历完一遍数组后，所有非零元素都在开始，即j左边。j的后边填充0.
 
 Time complexity: $O(n)$, space complexity: $O(1)$
+
+#### 287  Find the Duplicate Number
+
+**My solution**: use o(n) space
+
+用一个int数组count存已经出现过的元素，例如count[1] 代表下标为1在数组中出现了几次。遍历数组，更新count. 找到第一个count[i]>1的值。
+
+Time complexity: $O(n)$, space complexity: $O(n)$
+
+也可以用一个set
+
+**Solution 1**: sort
+
+给数组排序。如果排序后的数组，前后两个元素相同，则是重复元素。
+
+Time complexity: $O(nlogn)$, space complexity: $O(logn)
+
+**Solution 2**: binary search
+
+这道题是要求[1, ..n] 中的一个数，该数在数组中重复出现。我们可以利用二分法查找。利用范围中的中间数mid, 统计原始数组中小于等于这个元素的个数。如果count > mid, 说明重复元素在[left, mid]中。
+
+Time complexity: $O(nlogn)$, space complexity: $O(1)$
+
+**Solution 3**: two pointers 快慢指针
+
+这道题可以变成142 Linked List Cycle II。给定一个有环链表，求链表环开始的地方。
 
 #### 560 Subarray Sum Equals K
 
@@ -1100,7 +1151,34 @@ list的初始值为root结点。依次取list中的元素node, 如果node结点�
 
 **Solution 1**: dfs inorder + recursion
 
+前序遍历框架
 
+```
+void traverse(TreeNode root) {
+    if (root == null) {
+        // 暂且用数字 -1 代表空指针 null
+        res.addLast(-1);
+        return;
+    }
+
+    res.addLast(root.val);
+
+    traverse(root.left);
+    traverse(root.right);
+}
+```
+
+一般来说，单一个遍历结果（前中后序）是不能还原二叉树结构的。但如果在字符串中保留null结点，是可以通过一个顺序遍历还原的。
+
+**serialize: TreeNode root -> String**
+
+使用dfs对二叉树进行前序遍历。设置结点与结点之间的间隔符 SEP为",", null结点用"#"表示。使用StringBuilder存储遍历结果。
+
+设计函数```serialize(TreeNode node, StringBuilder builder)``` , 对于每一个node, 判断该结点是否为空。如果空节点，将null值加入builder. 如果非空，则将该点的值加入builder。并递归调用该点的左右孩子。
+
+**deserialize: String -> TreeNode node**
+
+和序列化的思路一样，递归解析
 
 #### 543 Diameter of Binary Tree
 
