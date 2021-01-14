@@ -523,7 +523,7 @@ Time complexity: $O(2n)$, space complexity: $O(3)$
 
 使用three pointers, 左指针初始为数组头，代表0部分的末尾，右指针初始为数组结尾，代表2部分的开始。
 
-使用第三个指针curr遍历数组,。遇到0，将curr与left交换，移动curr和left指针；遇到2，将curr与right交换，并移动right指针。知道curr > right。
+使用第三个指针curr遍历数组,。遇到0，将curr与left交换，移动curr和left指针；遇到2，将curr与right交换，并移动right指针。直到curr > right，也就是剩下的都是2部分。
 
 Time complexity: $ O(n) $, space complexity: $ O(1) $
 
@@ -976,9 +976,9 @@ Pre-order: root-left-right
 
 in-order:left-root-right
 
-loop 前序遍历，每个结点都是根节点。在中序遍历中找到根节点，根节点左边就是左子树，右边是右子树。为了方便寻找，用map<int, int>存中序遍历和下标。
+loop 前序遍历，每个结点都是根节点。在中序遍历中找到根节点，根节点左边就是左子树，右边是右子树。为了方便寻找，用map<int, int>存中序遍历和下标。为什么存中序不存前序呢？中序的根在中间，为了快速定位左右子树和根节点，需要存map.
 
-用int指针遍历前序遍历。在中序遍历中找到该节点。递归寻找左右子树。
+用int变量遍历前序遍历，它代表当前前序遍历中的位置。构造一个新节点，在中序遍历中找到该节点的位置。该结点的左子树是中序遍历在(left, 此节点位置)，右子树是中序遍历在(此节点位置，right中)。递归建立左右子树。
 
 #### 114 Flatten Binary Tree To Linked List
 
